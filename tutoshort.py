@@ -24,18 +24,17 @@ class AttackStrategy(Strategy):
         Strategy.__init__(self,"Attack")
     def compute_strategy(self,state,id_team,id_player):
         return SoccerAction(state.ball.position-state.player_state(id_team,id_player).position,Vector2D(GAME_WIDTH,GAME_HEIGHT/2.) - state.player_state(id_team,id_player).position)
-    
+  
 class DefenceStrategy(Strategy):
     def __init__(self):
-        Strategy.__init__(self,"defence")
+        Strategy.__init__(self,"Defence")
     def compute_strategy(self,state,id_team,id_player):
-        position = state.ball.position - state.player_state(id_team,id_player).position
-        return SoccerAction(position,Vector2D(GAME_WIDTH,GAME_HEIGHT/2.) - state.player_state(id_team,id_player).position)
+        return SoccerAction(state.ball.position-state.player_state(id_team,id_player).position,Vector2D(0,GAME_HEIGHT/2) - state.player_state(id_team,id_player).position)
 ## Creation d'une equipe
 team1 = SoccerTeam(name="team1",login="etu1")
 team2 = SoccerTeam(name="team2",login="etu2")
-team1.add("Johny",AttackStrategy()) #Strategie qui ne fait rien
-team2.add("Yannis",RandomStrategy())   #Strategie aleatoire
+team1.add("Johny",AttackStrategy()) 
+team2.add("Yannis",DefenceStrategy())   
 
 #Creation d'une partie
 simu = Simulation(team1,team2)

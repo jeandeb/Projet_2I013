@@ -41,10 +41,10 @@ class AttackStrategy( Strategy ):
         else:
             return SoccerAction( state.ball.position - state.player_state( id_team, id_player ).position, tirbut1 )
             
-class DefenceStrategy(Strategy):
+class DefenceStrategy( Strategy ):
 
-    def __init__(self):
-        Strategy.__init__(self,"Defence")
+    def __init__( self ):
+        Strategy.__init__( self, "Defence" )
 
     def compute_strategy( self, state, id_team, id_player ):
 

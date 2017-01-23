@@ -77,7 +77,7 @@ class FonceurStrategy( Strategy ):
         tirbut2 = but2 - state.player_state( id_team, id_player ).position
         tirbut1 = but1 - state.player_state( id_team, id_player ).position
 
-        if state.ball.position.distance > 0.1
+        if state.ball.position.distance > 0.1:
             return SoccerAction( state.ball.position - state.player_state( id_team, id_player ).position, Vecteur2D() ) 
 
 
@@ -95,7 +95,7 @@ class DefenceStrategy( Strategy ):
         if state.ball.vitesse.x > 0 or state.ball.vitesse.y > 0 :
 
             if id_team == 1:
-                 return SoccerAction( state.ball.position - p_position, tirbut2 )
+                 return SoccerAction( state.ball.position - p_position + Vector2D( -1, 0 ), tirbut2 )
 
             else:
                 return SoccerAction( state.ball.position - p_position, tirbut1 ) 
@@ -106,7 +106,7 @@ class DefenceStrategy( Strategy ):
 
 
         if id_team == 1:
-            positiondef = ( state.ball.position + but1)/2 - p_position
+            positiondef = ( state.ball.position + but1 )/2 - p_position
             
             return SoccerAction( positiondef, tirbut2 )
 

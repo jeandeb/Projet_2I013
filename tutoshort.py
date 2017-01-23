@@ -3,6 +3,7 @@ from soccersimulator.mdpsoccer import SoccerTeam, Simulation, SoccerAction
 from soccersimulator.gui import SimuGUI,show_state,show_simu
 from soccersimulator.utils import Vector2D
 import math
+import tools 
 
 GAME_WIDTH = 150 # Longueur du terrain
 GAME_HEIGHT = 90 # Largeur du terrain
@@ -66,6 +67,20 @@ class AttackStrategy( Strategy ):
         else:
             return SoccerAction( state.ball.position - state.player_state( id_team, id_player ).position, tirbut1 )
             
+class FonceurStrategy( Strategy ):
+    def __init__( self ):
+
+        Strategy.__init__( self, "Attack" )
+
+    def compute_strategy( self, state, id_team, id_player ):
+
+        tirbut2 = but2 - state.player_state( id_team, id_player ).position
+        tirbut1 = but1 - state.player_state( id_team, id_player ).position
+
+        if state.ball.position.distance > 0.1
+            return SoccerAction( state.ball.position - state.player_state( id_team, id_player ).position, Vecteur2D() ) 
+
+
 class DefenceStrategy( Strategy ):
 
     def __init__( self ):

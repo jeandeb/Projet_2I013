@@ -106,8 +106,8 @@ team2 = SoccerTeam( name = "team2", login = "etu2" )
 
 team1.add( "Johny", DefenceStrategy() ) 
 team1.add( "Pierre", AttackStrategy() )
-#team2.add( "Yannis", AttackStrategy() )
-#team2.add( "Larti", DefenceStrategy() )    
+team2.add( "Yannis", AttackStrategy() )
+team2.add( "Larti", DefenceStrategy() )    
 
 #Creation d'une partie
 simu = Simulation( team1, team2 )

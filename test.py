@@ -7,8 +7,8 @@ team2 = strategy.SoccerTeam( name = "team2", login = "etu2" )
 
 team1.add( "Johny", strategy.StrikerStrategy() ) 
 team1.add( "Pierre", strategy.DefenceStrategy() )
-#team2.add( "Yannis", strategy.DefenceOffStrategy() )
-#team2.add( "Larti", strategy.FonceurStrategy() )    
+team2.add( "Yannis", strategy.DefenceStrategy() )
+team2.add( "Larti", strategy.FonceurStrategy() )    
 
 #Creation d'une partie
 simu = strategy.Simulation( team1, team2 )

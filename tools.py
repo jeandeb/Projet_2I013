@@ -39,8 +39,16 @@ class properties(object):
         
     def ball_area(self, dist ) : 
         return (self.ball_position - self.owngoal).norm < dist 
-          
-    
+       
+    @property   
+    def vector_goal( self ):
+        return self.adgoal - self.my_position
+
+    @property 
+    def dist_goal( self ):
+        return self.vector_goal.norm
+
+
     @property
     def ball_side(self):
         return not self.ball_area( GAME_WIDTH/2 )
@@ -77,12 +85,16 @@ class properties(object):
     
     def dist_min(self,liste):
         mini = GAME_WIDTH+GAME_HEIGHT
+        idteam = 0
+        idmin = 0
+
         for i in liste:
             if i[2]<mini:
                 
                 mini=i[2]
                 idmin = i[1]
-        return [i[0], idmin]
+                idteam = i[0]
+        return [ idteam, idmin ]
     
     @property
     def pos_dist_min(self) :
@@ -128,7 +140,9 @@ class basic_action(object):
         return self.go( nearplayer + Vector2D( 40, 0 ) )
         
     def conduire( self, direction ):
-        return
+
+        dir_conduite = direction - self.prop.my_position
+        return self.passe( dir_conduite ) + self.go_ball
         
         
 def fonceur( basic_action ):
@@ -165,9 +179,9 @@ def defence_off(basic_action):
 
 def conduite_but( basic_action ):
 
-    
+    prop = basic_action.prop
 
-    return     
+    return basic_action.conduire( prop.adgoal )
     
     
 
@@ -189,8 +203,11 @@ def striker( basic_action ):
     
     prop = basic_action.prop
     
-    if prop.ball_side or prop.dist_ball < 15  :
+    if prop.dist_goal < 30 :
         return fonceur(basic_action)
+
+    if prop.ball_side or prop.dist_ball < 15  :
+        return conduite_but(basic_action)
         
     return basic_action.placement_att_sup
         

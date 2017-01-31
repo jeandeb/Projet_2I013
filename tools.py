@@ -13,6 +13,8 @@ maxPlayerSpeed = 1. # Vitesse maximale d un joueur
 maxPlayerAcceleration = 0.2 # Acceleration maximale
 maxBallAcceleration = 5 # Acceleration maximale de la balle
 
+
+
 but2 = Vector2D( GAME_WIDTH, GAME_HEIGHT/2. )
 but1 = Vector2D( 0, GAME_HEIGHT/2 )
 
@@ -39,8 +41,16 @@ class properties(object):
         
     def ball_area(self, dist ) : 
         return (self.ball_position - self.owngoal).norm < dist 
-          
-    
+       
+    @property   
+    def vector_goal( self ):
+        return self.adgoal - self.my_position
+
+    @property 
+    def dist_goal( self ):
+        return self.vector_goal.norm
+
+
     @property
     def ball_side(self):
         return not self.ball_area( GAME_WIDTH/2 )
@@ -60,7 +70,7 @@ class properties(object):
     def team_players(self):
         liste_tp = []
         for idt,idp in self.state.players : 
-            if idt== self.key[0] and idp != self.key[1] :
+            if idt == self.key[0] and idp != self.key[1] :
                 dist = (  self.state.player_state( idt, idp ).position - self.my_position ).norm
                 liste_tp.append([idt,idp, dist])
         return liste_tp
@@ -69,24 +79,37 @@ class properties(object):
     def adv_players(self):
         liste_ap = []
         for idt,idp in self.state.players : 
-            if idt.id_team != self.key[0] and idp.id_player != self.key[1] :
-                dist = ( idp.position.norm -  self.state.player_state( self.key[0], self.key[1] ).position ).norm
+            if idt != self.key[0] :
+                dist = ( self.state.player_state( idt, idp ).position - self.my_position ).norm
                 liste_ap.append([idt,idp, dist])
         return liste_ap     
     
     
-    def dist_min(self,liste):
-        mini = GAME_WIDTH+GAME_HEIGHT
+    def dist_min( self, liste ):
+
+        mini = GAME_WIDTH + GAME_HEIGHT
+        idteam = 0
+        idmin = 0
+
         for i in liste:
-            if i[2]<mini:
-                
-                mini=i[2]
+
+            if i[2] < mini :    
+                mini = i[2]
                 idmin = i[1]
-        return [i[0], idmin]
+                idteam = i[0]
+
+        return [ idteam, idmin ]
     
     @property
     def pos_dist_min(self) :
+
         dist_min =  self.dist_min( self.team_players )
+        return self.state.player_state( dist_min[0],  dist_min[1] ).position
+
+    @property
+    def pos_dist_min_ad(self ) :
+
+        dist_min =  self.dist_min( self.adv_players )
         return self.state.player_state( dist_min[0],  dist_min[1] ).position
     
     
@@ -100,7 +123,7 @@ class basic_action(object):
         self.prop = properties
     
     def passe(self,p):
-        return SoccerAction(Vector2D(),p-self.prop.my_position)
+        return SoccerAction( Vector2D(), p - self.prop.my_position )
     
     def go(self,p):
         return SoccerAction(p-self.prop.my_position,Vector2D())
@@ -124,11 +147,48 @@ class basic_action(object):
             
     @property
     def placement_att_sup(self):
+        #if len( self.prop.team_players ) <= 1: 
+            #return self.go_ball
+
         nearplayer = self.prop.pos_dist_min
         return self.go( nearplayer + Vector2D( 40, 0 ) )
         
-    def conduire( self, direction ):
-        return
+    def conduire( self, point_direction, norm ):
+
+        dir_conduite = point_direction - self.prop.my_position
+        angle_con = dir_conduite.angle
+
+        if not self.prop.can_shoot : 
+           return self.go_ball
+
+        return SoccerAction( Vector2D(), Vector2D(angle = angle_con, norm = norm ) )
+
+    @property
+    def dribbler( self  ):
+
+        dist_adv = self.prop.dist_min
+        pos_adv = self.prop.pos_dist_min_ad
+        vec_adv = pos_adv - self.prop.my_position
+
+        def_behind = ( (self.prop.my_position - self.prop.adgoal).norm < (pos_adv - self.prop.adgoal).norm )
+
+
+        if vec_adv.norm < 30 and not def_behind : 
+            angle_drib = vec_adv.angle
+            #vec_adv += Vector2D( angle_drib, vec_adv.norm )
+            if angle_drib < 0 :
+                return self.conduire( pos_adv + Vector2D( 0, 10 ), 2.5 )
+            return self.conduire( pos_adv + Vector2D( 0, -10 ), 2.5 )
+
+        cpt = 0;
+        for idt, idp, dist in self.prop.adv_players : 
+            if ( (self.prop.my_position - self.prop.adgoal).norm < (self.prop.state.player_state( idt,  idp ).position - self.prop.adgoal).norm ) : 
+                cpt += 1
+            
+        if cpt == len( self.prop.adv_players ) :
+            return self.conduire( self.prop.adgoal, 2 )
+
+        return self.conduire( self.prop.adgoal, 1 )
         
         
 def fonceur( basic_action ):
@@ -144,7 +204,7 @@ def passeur( basic_action ):
            return basic_action.go_ball
       
     nearplayer = prop.pos_dist_min
-    return basic_action.passe( nearplayer )
+    return basic_action.passe( nearplayer.scale(1.2) )
 
 #def dribbleur( basic_action )       
     
@@ -165,16 +225,16 @@ def defence_off(basic_action):
 
 def conduite_but( basic_action ):
 
-    
+    prop = basic_action.prop
 
-    return     
+    return basic_action.conduire( prop.adgoal, 1 )
     
     
-
+#defenseur de merde, il faut qu'il fassse bien la passe putain ca rend ouf
 def defence(basic_action):
     
     prop = basic_action.prop
-    if prop.ball_area(30) :
+    if prop.ball_area( 45 ) :
         return passeur(basic_action)
         
     if prop.ball_side or not prop.ball_move:
@@ -189,8 +249,13 @@ def striker( basic_action ):
     
     prop = basic_action.prop
     
-    if prop.ball_side or prop.dist_ball < 15  :
+    if prop.dist_goal < 30 :
+
         return fonceur(basic_action)
+
+    if prop.ball_side or prop.dist_ball < 20  :
+
+        return basic_action.dribbler
         
     return basic_action.placement_att_sup
         

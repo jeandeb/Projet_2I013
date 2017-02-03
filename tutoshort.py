@@ -56,12 +56,12 @@ class FonceurStrategy( Strategy ):
 
     def compute_strategy( self, state, id_team, id_player ):
         
-        state = tools.MyState(state,id_team,id_player)
+        state = tools.MyState(state,id_team,id_player )
         
-        if not state.can_shoot() : 
-           return state.go_ball()
+        if not state.can_shoot( ) : 
+           return state.go_ball( )
            
-        return state.shoot_goal()
+        return state.shoot_goal( )
 
 
 
@@ -72,36 +72,36 @@ class DefenceStrategy( Strategy ):
 
     def compute_strategy( self, state, id_team, id_player ):
         
-        state = tools.MyState(state,id_team,id_player)
+        state = tools.MyState(state,id_team,id_player )
         
         
-        if state.is_goal() :
-             if not state.can_shoot() : 
-                 return state.go_ball()
-             return state.shoot_goal()
+        if state.is_goal( ) :
+             if not state.can_shoot( ) : 
+                 return state.go_ball( )
+             return state.shoot_goal( )
             
             
-        if not state.ball_move():
-            return state.placement()
+        if not state.ball_move( ):
+            return state.placement( )
             
-        if not state.can_shoot() : 
-           return state.go_ball()
+        if not state.can_shoot( ) : 
+           return state.go_ball( )
            
-        return state.shoot_goal()
+        return state.shoot_goal( )
         
 
 ## Creation d'une equipe
 team1 = SoccerTeam( name = "team1" ,login = "etu1" )
 team2 = SoccerTeam( name = "team2", login = "etu2" )
 
-##team1.add( "Johny", FonceurStrategy() ) 
-team1.add( "Pierre", DefenceStrategy() )
-##team2.add( "Yannis", DefenceStrategy() )
-team2.add( "Larti", FonceurStrategy() )    
+##team1.add( "Johny", FonceurStrategy( ) ) 
+team1.add( "Pierre", DefenceStrategy( ) )
+##team2.add( "Yannis", DefenceStrategy( ) )
+team2.add( "Larti", FonceurStrategy( ) )    
 
 #Creation d'une partie
 simu = Simulation( team1, team2 )
 #Jouer et afficher la partie
 show_simu( simu )
 #Jouer sans afficher
-simu.start()
+simu.start( )

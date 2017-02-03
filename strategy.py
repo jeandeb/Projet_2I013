@@ -35,10 +35,10 @@ class FonceurStrategy( Strategy ):
 
     def compute_strategy( self, state, id_team, id_player ):
         
-        prop =  tools.properties(state,id_team,id_player)
-        state = tools.basic_action(prop)
+        prop =  tools.properties(state,id_team,id_player )
+        state = tools.basic_action(prop )
         
-        return tools.fonceur(state)
+        return tools.fonceur(state )
 
 class StrikerStrategy( Strategy ):
     def __init__( self ):
@@ -46,10 +46,10 @@ class StrikerStrategy( Strategy ):
             
     def compute_strategy( self, state, id_team, id_player ):
         
-        prop =  tools.properties(state,id_team,id_player)
-        state = tools.basic_action(prop)
+        prop =  tools.properties(state,id_team,id_player )
+        state = tools.basic_action(prop )
         
-        return tools.striker(state)
+        return tools.striker(state )
     
 
 class DefenceStrategy( Strategy ):
@@ -59,10 +59,10 @@ class DefenceStrategy( Strategy ):
 
     def compute_strategy( self, state, id_team, id_player ):
         
-        prop =  tools.properties(state,id_team,id_player)
-        state = tools.basic_action(prop)
+        prop =  tools.properties(state,id_team,id_player )
+        state = tools.basic_action(prop )
         
-        return tools.defence(state)
+        return tools.defence(state )
         
 class DefenceOffStrategy( Strategy ):
 
@@ -71,10 +71,10 @@ class DefenceOffStrategy( Strategy ):
 
     def compute_strategy( self, state, id_team, id_player ):
         
-        prop =  tools.properties(state,id_team,id_player)
-        state = tools.basic_action(prop)
+        prop =  tools.properties(state,id_team,id_player )
+        state = tools.basic_action(prop )
         
-        return tools.defence_off(state)
+        return tools.defence_off(state )
 
     
     

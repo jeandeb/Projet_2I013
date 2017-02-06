@@ -5,8 +5,8 @@ import strategy
 team1 = strategy.SoccerTeam( name = "team1" ,login = "etu1" )
 team2 = strategy.SoccerTeam( name = "team2", login = "etu2" )
 
-team1.add( "Mahrez", strategy.StrikerStrategy( ) ) 
-team1.add( "Aurier", strategy.DefenceStrategy( ) )
+#team1.add( "Mahrez", strategy.StrikerStrategy( ) ) 
+team1.add( "Aurier", strategy.SoloStrategy( ) )
 team2.add( "Toulalan", strategy.DefenceStrategy( ) )
 team2.add( "Henry", strategy.StrikerStrategy( ) )    
 

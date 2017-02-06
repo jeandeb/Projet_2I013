@@ -77,7 +77,17 @@ class DefenceOffStrategy( Strategy ):
         return tools.defence_off(state )
 
     
-    
+class SoloStrategy( Strategy ):
+
+    def __init__( self ):
+        Strategy.__init__( self, "Solo" )
+
+    def compute_strategy( self, state, id_team, id_player ):
+        
+        prop =  tools.properties(state,id_team,id_player )
+        state = tools.basic_action( prop )
+        
+        return tools.solo(state )
     
     
     

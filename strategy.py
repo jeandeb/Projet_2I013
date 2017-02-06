@@ -5,6 +5,7 @@ from soccersimulator.utils import Vector2D
 import tools
 
 
+
 GAME_WIDTH = 150 # Longueur du terrain
 GAME_HEIGHT = 90 # Largeur du terrain
 GAME_GOAL_HEIGHT = 10 # Largeur des buts

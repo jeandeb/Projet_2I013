@@ -51,7 +51,6 @@ class properties( object ):
     def dist_goal( self ):
         return self.vector_goal.norm
 
-
     @property
     def ball_side( self ):
         return not self.ball_area( GAME_WIDTH/2 )
@@ -126,6 +125,9 @@ class properties( object ):
         return cpt == len( self.adv_players ) 
 
 
+    @property
+    def anticipe_dir(self):
+        #JOHNY CECI EST LA BRANCHE TMP , RECU ? 
 
     
    
@@ -157,18 +159,17 @@ class basic_action( object ):
     def placement_def( self ):
         return self.go( ( self.prop.ball_position + self.prop.owngoal )/2 )
         
-    @property
+    @property #PAS BESOIN POUR LE MOMENT
     def placement_att( self ):
         if self.prop.ball_side :
             return self.go( Vector2D( GAME_WIDTH + 3, GAME_HEIGHT ) )
             
     @property
     def placement_att_sup( self ):
-        #if len( self.prop.team_players ) <= 1: 
-            #return self.go_ball
-
         nearplayer = self.prop.pos_dist_min 
-        return self.go( nearplayer + Vector2D( 40, 0 ) )
+        if self.prop.key[0] == 1 : 
+            return self.go( nearplayer + Vector2D( 40, 0 ) )
+        return self.go( nearplayer + Vector2D( -40, 0 ) )
         
     def conduire( self, point_direction, norm ):
 
@@ -192,7 +193,7 @@ class basic_action( object ):
     @property
     def dribbler_but( self  ):
 
-        dist_adv = self.prop.dist_min
+        #dist_adv = self.prop.dist_min
         pos_adv = self.prop.pos_dist_min_ad
         vec_adv = pos_adv - self.prop.my_position
 
@@ -237,15 +238,16 @@ def defence_off( basic_action ):
            
     return basic_action.shoot_goal
 
+#NE FONCTIONNE PAS
 def solo( basic_action ):
-
     prop = basic_action.prop
-    if prop.ball_side:
-        return defence_off( basic_action )
+    if prop.ball_area( 30 ) :
+        return fonceur( basic_action )
+    if not prop.ball_move:
+        return basic_action.placement_def
 
-        if not prop.can_shoot : 
-            return basic_action.go_ball 
-        return basic_action.dribbler_but
+    if not prop.can_shoot : 
+        return basic_action.go_ball
 
     return basic_action.dribbler_but
 

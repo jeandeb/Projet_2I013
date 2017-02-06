@@ -127,7 +127,8 @@ class properties( object ):
 
     @property
     def anticipe_dir(self):
-        #JOHNY CECI EST LA BRANCHE TMP , RECU ? 
+        return self.vector_ball + 10*self.ball_vitesse
+        
 
     
    
@@ -140,8 +141,13 @@ class basic_action( object ):
         self.prop = properties
     
     def passe( self,p ):
-        return SoccerAction( Vector2D( ), p - self.prop.my_position )
-    
+        
+        dir_conduite = p - self.prop.my_position
+        angle_con = dir_conduite.angle
+        norm = dir_conduite.norm / 2
+
+        return SoccerAction( Vector2D( ), Vector2D( angle = angle_con, norm = norm ) )
+     
     def go( self,p ):
         return SoccerAction( p-self.prop.my_position,Vector2D( ) )
     
@@ -149,6 +155,10 @@ class basic_action( object ):
     def go_ball( self ) : 
         return SoccerAction( self.prop.vector_ball,Vector2D( ) )
     
+    @property
+    def go_anticipe_ball( self ) : 
+        return SoccerAction( self.prop.anticipe_dir, Vector2D() ) 
+        
     #Calibrer le tir sur la distance par rapport au but
     @property
     def shoot_goal( self ):
@@ -168,8 +178,8 @@ class basic_action( object ):
     def placement_att_sup( self ):
         nearplayer = self.prop.pos_dist_min 
         if self.prop.key[0] == 1 : 
-            return self.go( nearplayer + Vector2D( 40, 0 ) )
-        return self.go( nearplayer + Vector2D( -40, 0 ) )
+            return self.go( nearplayer + Vector2D( 50, 0 ) )
+        return self.go( nearplayer + Vector2D( -50, 0 ) )
         
     def conduire( self, point_direction, norm ):
 
@@ -234,7 +244,7 @@ def defence_off( basic_action ):
 
          
     if not prop.can_shoot : 
-        return basic_action.go_ball
+        return basic_action.go_anticipe_ball
            
     return basic_action.shoot_goal
 
@@ -262,14 +272,14 @@ def conduite_but( basic_action ):
 def defence( basic_action ):
     
     prop = basic_action.prop
-    if prop.ball_area( 45 ) :
+    if prop.ball_area( 50 ) :
         return passeur( basic_action ) 
         
     if prop.ball_side or not prop.ball_move:
         return basic_action.placement_def
          
     if not prop.can_shoot : 
-        return basic_action.go_ball
+        return basic_action.go_anticipe_ball
            
     return basic_action.shoot_goal
         

@@ -126,10 +126,14 @@ class properties( object ):
 
 
     @property
-    def anticipe_dir(self):
+    def anticipe_dir(self): #Anticipe la direction de la balle 
         return self.vector_ball + 10*self.ball_vitesse
         
-
+    
+    #@property
+    #def near_play_ball( self ) :
+      #  for i in teamplayers : 
+            
     
    
     

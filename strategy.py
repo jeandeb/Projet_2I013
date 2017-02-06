@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-<
+
 from soccersimulator.strategies  import Strategy
 from soccersimulator.mdpsoccer import SoccerTeam, Simulation, SoccerAction
 from soccersimulator.gui import SimuGUI,show_state,show_simu

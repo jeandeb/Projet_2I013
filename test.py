@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-<
 
 import strategy
 
@@ -7,7 +8,7 @@ team2 = strategy.SoccerTeam( name = "team2", login = "etu2" )
 
 team1.add( "Cavani", strategy.StrikerStrategy( ) ) 
 team1.add( "Aurier", strategy.DefenceStrategy( ) )
-team2.add( "Toulalan", strategy.DefenceOffStrategy( ) )
+team2.add( "Toulalan", strategy.DefenceStrategy( ) )
 team2.add( "Henry", strategy.FonceurStrategy( ) )    
 
 #Creation d'une partie

@@ -1,3 +1,7 @@
+# -*- coding: utf-8 -*-<
+
+
+
 #from soccersimulator.strategies  import Strategy
 from soccersimulator.mdpsoccer import SoccerTeam, Simulation, SoccerAction
 #from soccersimulator.gui import SimuGUI,show_state,show_simu
@@ -130,9 +134,13 @@ class properties( object ):
         return self.vector_ball + 10*self.ball_vitesse
         
     
-    #@property
-    #def near_play_ball( self ) :
-      #  for i in teamplayers : 
+    @property
+    def near_play_ball( self ) :
+        for idt,idp in self.state.players : 
+                dist = ( self.state.player_state( idt, idp ).position - self.ball_position ).norm
+                if dist < self.dist_ball:
+                    return False
+        return True
             
     
    
@@ -198,8 +206,8 @@ class basic_action( object ):
     def grand_pont( self, angle, pos ):
 
         if angle < 0 :
-            return self.conduire( pos + Vector2D( 0, 10 ), 2.5 )
-        return self.conduire( pos + Vector2D( 0, -10 ), 2.5 )
+            return self.conduire( pos + Vector2D( 0, 8 ), 2.5 ) # j'ai remplacé 10 par 8 et -8
+        return self.conduire( pos + Vector2D( 0, -8 ), 2.5 )
         
 
 
@@ -212,7 +220,7 @@ class basic_action( object ):
         vec_adv = pos_adv - self.prop.my_position
 
         def_behind = ( ( self.prop.my_position - self.prop.adgoal ).norm < ( pos_adv - self.prop.adgoal ).norm )
-        if vec_adv.norm < 30 and not def_behind : 
+        if vec_adv.norm < 20 and not def_behind : #valeur avant 30
 
             return self.grand_pont( vec_adv.angle, pos_adv )
 
@@ -240,7 +248,7 @@ def passeur( basic_action ):
 def defence_off( basic_action ):
     
     prop = basic_action.prop
-    if prop.ball_area( 30 ) :
+    if prop.ball_area( 30 ):
         return fonceur( basic_action )
                       
     if not prop.ball_move:
@@ -276,7 +284,7 @@ def conduite_but( basic_action ):
 def defence( basic_action ):
     
     prop = basic_action.prop
-    if prop.ball_area( 50 ) :
+    if prop.ball_area( 50 ) or prop.near_play_ball :
         return passeur( basic_action ) 
         
     if prop.ball_side or not prop.ball_move:

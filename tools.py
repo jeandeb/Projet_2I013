@@ -167,7 +167,7 @@ class basic_action( object ):
         #if len( self.prop.team_players ) <= 1: 
             #return self.go_ball
 
-        nearplayer = self.prop.pos_dist_min
+        nearplayer = self.prop.pos_dist_min 
         return self.go( nearplayer + Vector2D( 40, 0 ) )
         
     def conduire( self, point_direction, norm ):
@@ -240,11 +240,8 @@ def defence_off( basic_action ):
 def solo( basic_action ):
 
     prop = basic_action.prop
-    if prop.ball_area( 70 ) :
-        if prop.ball_area( 45 ) :
-            return basic_action.dribbler_but
-        if not prop.ball_move:
-            return basic_action.placement_def
+    if prop.ball_side:
+        return defence_off( basic_action )
 
         if not prop.can_shoot : 
             return basic_action.go_ball 

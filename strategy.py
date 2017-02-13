@@ -5,6 +5,7 @@ from soccersimulator.mdpsoccer import SoccerTeam, Simulation, SoccerAction
 from soccersimulator.gui import SimuGUI,show_state,show_simu
 from soccersimulator.utils import Vector2D
 import tools
+import basic_strategy
 
 
 
@@ -20,15 +21,22 @@ maxBallAcceleration = 5 # Acceleration maximale de la balle
 
 ## Strategie aleatoire
 
+
+
+
+
+
+
+
+
+
 class CenterStrategy( Strategy ) : 
     def __init__( self ):
 
         Strategy.__init__( self, "Random" )
 
     def compute_strategy( self, state, id_team, id_player ):
-
-
-        
+  
         return SoccerAction( Vector2D.create_random( -0.5, 0.5 ), Vector2D.create_random( -0.5, 0.5 ) )
         
 class FonceurStrategy( Strategy ):

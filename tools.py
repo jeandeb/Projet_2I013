@@ -131,7 +131,7 @@ class properties( object ):
 
     @property
     def anticipe_dir(self): #Anticipe la direction de la balle 
-        return self.vector_ball + 10*self.ball_vitesse
+        return self.vector_ball + 15*self.ball_vitesse
         
     
     @property
@@ -141,6 +141,8 @@ class properties( object ):
                 if dist < self.dist_ball:
                     return False
         return True
+        
+
             
     
    
@@ -161,7 +163,7 @@ class basic_action( object ):
         return SoccerAction( Vector2D( ), Vector2D( angle = angle_con, norm = norm ) )
      
     def go( self,p ):
-        return SoccerAction( p-self.prop.my_position,Vector2D( ) )
+        return SoccerAction( p - self.prop.my_position,Vector2D( ) )
     
     @property    
     def go_ball( self ) : 
@@ -218,16 +220,27 @@ class basic_action( object ):
         #dist_adv = self.prop.dist_min
         pos_adv = self.prop.pos_dist_min_ad
         vec_adv = pos_adv - self.prop.my_position
-
+        
         def_behind = ( ( self.prop.my_position - self.prop.adgoal ).norm < ( pos_adv - self.prop.adgoal ).norm )
-        if vec_adv.norm < 20 and not def_behind : #valeur avant 30
+        if vec_adv.norm < 15 and not def_behind : #valeur avant 30
 
             return self.grand_pont( vec_adv.angle, pos_adv )
+        if vec_adv.norm < 30 and not def_behind:
+            return self.roulette            
 
         if self.prop.all_advplayers_behind :
             return self.conduire( self.prop.adgoal, 2 )
 
         return self.conduire( self.prop.adgoal, 1 )
+    
+    @property
+    def roulette( self ):
+        
+        pos_adv = self.prop.pos_dist_min_ad
+        vec_adv = pos_adv - self.prop.my_position
+        vecteur_roulette = Vector2D( angle = vec_adv.angle + 1.5, norm = vec_adv.norm )
+        return self.conduire( vecteur_roulette, 1.5 )
+            
         
         
 def fonceur( basic_action ):
@@ -263,16 +276,22 @@ def defence_off( basic_action ):
 #NE FONCTIONNE PAS
 def solo( basic_action ):
     prop = basic_action.prop
-    if prop.ball_area( 30 ) :
+         
+    if prop.dist_goal < 25 :
         return fonceur( basic_action )
+    if prop.ball_area( 30 ) or prop.dist_ball < 20 :
+        return basic_action.dribbler_but
+        
     if not prop.ball_move:
         return basic_action.placement_def
+    if prop.near_play_ball:
+        return basic_action.go_anticipe_ball
 
-    if not prop.can_shoot : 
-        return basic_action.go_ball
-
-    return basic_action.dribbler_but
-
+    return basic_action.go_ball
+        
+        
+        
+        
 def conduite_but( basic_action ):
 
     prop = basic_action.prop

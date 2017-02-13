@@ -3,7 +3,7 @@ import tools
 
 class basic_strategy(object):
     
-    def __init__(self,basic_action):
+    def __init__(self):
         self.ba=tools.basic_action
     
     def fonceur( basic_action ):
@@ -39,14 +39,15 @@ class basic_strategy(object):
     def solo( basic_action ):
     
         prop = basic_action.prop
-        if prop.ball_side:
-            return defence_off( basic_action )
+        if prop.dist_goal < 30 :
     
-            if not prop.can_shoot : 
-                return basic_action.go_ball 
+            return fonceur( basic_action )
+    
+        if prop.ball_side or prop.dist_ball < 20  :
+    
             return basic_action.dribbler_but
-    
-        return basic_action.dribbler_but
+            
+        return basic_action.go_ball
     
     def conduite_but( basic_action ):
     

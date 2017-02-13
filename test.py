@@ -6,11 +6,12 @@ import strategy
 team1 = strategy.SoccerTeam( name = "team1" ,login = "etu1" )
 team2 = strategy.SoccerTeam( name = "team2", login = "etu2" )
 
-team1.add( "Cavani", strategy.StrikerStrategy( ) ) 
-team1.add( "Aurier", strategy.DefenceStrategy( ) )
-team2.add( "Toulalan", strategy.DefenceStrategy( ) )
-team2.add( "Henry", strategy.FonceurStrategy( ) )    
-
+#team1.add( "Cavani", strategy.FonceurStrategy( ) ) 
+team1.add( "Aurier", strategy.SoloStrategy( ) )
+#team1.add( "Sarko", strategy.StrikerStrategy( ) )
+#team1.add( "JLM", strategy.DefenceStrategy( ) )    
+team2.add( "Hollande", strategy.FonceurStrategy( ) )
+#team2.add( "Fillon", strategy.DefenceStrategy( ) )
 #Creation d'une partie
 simu = strategy.Simulation( team1, team2 )
 #Jouer et afficher la partie

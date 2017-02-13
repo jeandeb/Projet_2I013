@@ -3,7 +3,7 @@
 from soccersimulator.strategies  import Strategy
 from soccersimulator.mdpsoccer import SoccerTeam, Simulation, SoccerAction
 from soccersimulator.gui import SimuGUI,show_state,show_simu
-from soccersimulator.utils import Vector2D, dump
+from soccersimulator.utils import Vector2D
 import tools
 
 
@@ -25,19 +25,13 @@ class ShootingLearningStrat( Strategy ) :
 
         Strategy.__init__( self, "shooting_learning" )
 
-	def end_round( self, team1, team2, state ) :
-		self.listeners.end_round(self.team1, self.team2, self.state)
-		#prop =  tools.properties(state,id_team,id_player )
-			#f.write( "" + prop.my_position.x + " " +  prop.my_position.y )
-		f = open( "learning_shoot.txt" ,"w")
-		f.write( "lol" )
-		f.close()
-		pass
+    def end_round( self, team1, team2, state ) :
+        return
 
     def compute_strategy( self, state, id_team, id_player ):
-    	prop =  tools.properties(state,id_team,id_player )
+        prop =  tools.properties(state,id_team,id_player )
         state = tools.basic_action(prop )
-
+        
         return state.shoot_goal
 
 

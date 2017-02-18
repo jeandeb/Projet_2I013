@@ -24,14 +24,18 @@ but1 = Vector2D( 0, GAME_HEIGHT/2 )
 
 class properties( object ):
     def __init__( self,state,idteam,idplayer ):
-        self.state=state
-        self.key=( idteam,idplayer )
+        self.state = state
+        self.key = ( idteam, idplayer )
         if self.key[0] == 1 : 
             self.owngoal =  Vector2D( 0, GAME_HEIGHT/2 )
             self.adgoal =  Vector2D( GAME_WIDTH, GAME_HEIGHT/2. )
+            self.left = Vector2D( GAME_WIDTH/2, GAME_HEIGHT )
+            self.right = Vector2D( GAME_WIDTH/2, 0 )
         else : 
             self.adgoal =  Vector2D( 0, GAME_HEIGHT/2 )
             self.owngoal =  Vector2D( GAME_WIDTH, GAME_HEIGHT/2. )
+            self.left = Vector2D( GAME_WIDTH/2, 0 )
+            self.right = Vector2D( GAME_WIDTH/2, GAME_HEIGHT )
         self.my_position =  self.state.player_state( self.key[0], self.key[1] ).position
         self.ball_position = self.state.ball.position
         self.ball_vitesse = self.state.ball.vitesse
@@ -176,8 +180,8 @@ class basic_action( object ):
     #Calibrer le tir sur la distance par rapport au but
     @property
     def shoot_goal( self ):
-        
-        return SoccerAction( Vector2D( ),self.prop.adgoal - self.prop.my_position )
+        vector_shoot = self.prop.adgoal - self.prop.my_position
+        return SoccerAction( Vector2D( ), vector_shoot/2 )
         
     @property
     def placement_def( self ):
@@ -200,20 +204,23 @@ class basic_action( object ):
         dir_conduite = point_direction - self.prop.my_position
         angle_con = dir_conduite.angle
 
+        if not self.prop.can_shoot and self.prop.ball_vitesse.norm > 1 : 
+           return self.go_anticipe_ball
         if not self.prop.can_shoot : 
            return self.go_ball
 
         return SoccerAction( Vector2D( ), Vector2D( angle = angle_con, norm = norm ) )
 
-    def grand_pont( self, angle, pos ):
+    def grand_pont( self, angle, pos, angle_force, force ):
 
         if angle < 0 :
-            return self.conduire( pos + Vector2D( 0, 8 ), 2.5 ) # j'ai remplacé 10 par 8 et -8
-        return self.conduire( pos + Vector2D( 0, -8 ), 2.5 )
+            return self.conduire( pos + Vector2D( 0, -angle_force ), force ) # j'ai remplacé 10 par 8 et -8
+        return self.conduire( pos + Vector2D( 0, angle_force ), force )
         
 
 
     #IL FAUT SIMPFLIFIER
+    #Probleme on fait avec des angles ce qui nest pas symetrique
     @property
     def dribbler_but( self  ):
 
@@ -222,14 +229,34 @@ class basic_action( object ):
         vec_adv = pos_adv - self.prop.my_position
         
         def_behind = ( ( self.prop.my_position - self.prop.adgoal ).norm < ( pos_adv - self.prop.adgoal ).norm )
-        if vec_adv.norm < 15 and not def_behind : #valeur avant 30
+        if vec_adv.norm < 10 and not def_behind : #valeur avant 30
+            return self.grand_pont( vec_adv.angle, pos_adv, 10, 2 )
 
-            return self.grand_pont( vec_adv.angle, pos_adv )
         if vec_adv.norm < 30 and not def_behind:
-            return self.roulette            
+            return self.grand_pont( vec_adv.angle, pos_adv, 30, 1 )            
 
         if self.prop.all_advplayers_behind :
-            return self.conduire( self.prop.adgoal, 2 )
+            return self.conduire( self.prop.adgoal, 2.2 )
+
+        return self.conduire( self.prop.adgoal, 1 )
+
+    @property
+    def solo_dribbler_but( self  ):
+
+        #dist_adv = self.prop.dist_min
+        pos_adv = self.prop.pos_dist_min_ad
+        vec_adv = pos_adv - self.prop.my_position
+        
+        def_behind = ( ( self.prop.my_position - self.prop.adgoal ).norm <= ( pos_adv - self.prop.adgoal ).norm )
+
+        if (vec_adv.norm < 30 or self.prop.ball_side) and not def_behind:
+            return self.grand_pont( vec_adv.angle, pos_adv, -30, 1 )  
+
+        if vec_adv.norm < 10 and not def_behind : #valeur avant 30
+            return self.grand_pont( vec_adv.angle, pos_adv, -10, 2 )         
+
+        if self.prop.all_advplayers_behind :
+            return self.conduire( self.prop.adgoal, 2.2 )
 
         return self.conduire( self.prop.adgoal, 1 )
     
@@ -238,6 +265,10 @@ class basic_action( object ):
         
         pos_adv = self.prop.pos_dist_min_ad
         vec_adv = pos_adv - self.prop.my_position
+        if angle < 0 :
+            return self.conduire( pos + Vector2D( 0, 8 ), 2.5 ) # j'ai remplacé 10 par 8 et -8
+        return self.conduire( pos + Vector2D( 0, -8 ), 2.5 )
+
         vecteur_roulette = Vector2D( angle = vec_adv.angle + 1.5, norm = vec_adv.norm )
         return self.conduire( vecteur_roulette, 1.5 )
             
@@ -280,7 +311,7 @@ def solo( basic_action ):
     if prop.dist_goal < 25 :
         return fonceur( basic_action )
     if prop.ball_area( 30 ) or prop.dist_ball < 20 :
-        return basic_action.dribbler_but
+        return basic_action.solo_dribbler_but
         
     if not prop.ball_move:
         return basic_action.placement_def

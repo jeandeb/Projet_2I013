@@ -15,7 +15,7 @@ class ShootSearch(object):
         discr_step  : pas de discretisation du parametre
         nb_essais : nombre d'essais par parametre
     """
-    MAX_STEP = 40
+    MAX_STEP = 1
 
     def __init__(self):
         self.data = dataclass.discretedata()
@@ -36,11 +36,15 @@ class ShootSearch(object):
 
         self.step = self.data.nb_x * self.data.nb_y
 
-        self.step_cpt = 0
+        self.step_tir = 0
 
         self.cpt_y = 0
 
         self.cpt_x = 0
+        
+        self.max_norm = 3
+        
+        self.max_tir = 2
 
 
     def start(self,visu=True):
@@ -66,19 +70,39 @@ class ShootSearch(object):
     def begin_round(self,team1,team2,state):
         """ engagement : position random du joueur et de la balle """
         position = Vector2D()
+        x = settings.GAME_WIDTH/2 + (self.cpt_x * self.data.step_x)
+        y = self.cpt_y * self.data.step_y
 
-        if self.cpt_y <= self.data.nb_y :
-            self.cpt_y += 1
-        else :
-            self.cpt_y = 0
+        if self.step_tir <= self.max_tir:
+                self.step_tir+=1
+        else : 
+            self.proba = self.but / self.max_tir
+            if self.data.get_proba(x , y ) < self.proba :
+                self.data.set_proba( self.proba, x, y )
+                self.data.set_norm( self.strat.norm, x, y )
+            self.step_tir = 0
+            if self.strat.norm <= self.max_norm :
+                self.strat.norm+=1
+                self.but = 0
+            else :
+                self.strat.norm = 0
+                if self.cpt_y <= self.data.nb_y : 
+                    self.cpt_y += 1
+            
+                else :
+                    self.cpt_x += 1
+                    self.cpt_y = 0
+                
+    
 
-        if self.cpt_x <= self.data.nb_y :
-            self.cpt_x += 1
-        else :
-            self.simu.end_round()
-
-        self.simu.state.states[(1,0)].position = Vector2D( self.cpt_x * self.data.step_x, self.cpt_y * self.data.step_y )
+        
+        self.cpt +=1
+        position = Vector2D( x, y )
+        
+        self.simu.state.states[(1,0)].position = position.copy()
+        self.simu.state.ball.position = position.copy()
         self.simu.state.states[(1,0)].vitesse = Vector2D()
+        
         self.last = self.simu.step
 
     def update_round(self,team1,team2,state):
@@ -88,12 +112,11 @@ class ShootSearch(object):
             self.simu.end_round()
 
     def end_round(self,team1,team2,state):
-
+       
         if state.goal > 0:
             self.but += 1
 
-        """ si tous les tirs ont ete fait a toutes les cases, enmatch"""
-        if self.cpt >= self.step * self.nb_tirs_case : 
+        if self.cpt_x > self.data.nb_x : 
             self.simu.end_match()
 
 

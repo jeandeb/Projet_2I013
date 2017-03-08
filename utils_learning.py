@@ -1,5 +1,6 @@
 from soccersimulator.utils import Vector2D
 from soccersimulator.mdpsoccer import Ball
+from soccersimulator import settings
 import strategy
 
 class Observer( object ):
@@ -32,7 +33,11 @@ class Observer( object ):
             self.simu.end_match()
     
     
-            
-        
+class Config_discrete( object ):
+    
+    def __init__( self ) :
+        self.tab_config = 
         
     
+        
+        

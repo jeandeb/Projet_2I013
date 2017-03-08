@@ -22,14 +22,6 @@ maxBallAcceleration = 5 # Acceleration maximale de la balle
 ## Strategie aleatoire
 
 
-
-
-
-
-
-
-
-
 class CenterStrategy( Strategy ) : 
     def __init__( self ):
 
@@ -49,7 +41,7 @@ class FonceurStrategy( Strategy ):
         prop =  tools.properties(state,id_team,id_player )
         state = tools.basic_action(prop )
         
-        return tools.fonceur(state )
+        return basic_strategy.fonceur( state )
 
 class StrikerStrategy( Strategy ):
     def __init__( self ):
@@ -60,7 +52,7 @@ class StrikerStrategy( Strategy ):
         prop =  tools.properties(state,id_team,id_player )
         state = tools.basic_action(prop )
         
-        return tools.striker(state )
+        return basic_strategy.striker(state )
     
 
 class DefenceStrategy( Strategy ):
@@ -73,7 +65,7 @@ class DefenceStrategy( Strategy ):
         prop =  tools.properties(state,id_team,id_player )
         state = tools.basic_action(prop )
         
-        return tools.defence(state )
+        return basic_strategy.defence(state )
         
 class DefenceOffStrategy( Strategy ):
 
@@ -85,7 +77,7 @@ class DefenceOffStrategy( Strategy ):
         prop =  tools.properties(state,id_team,id_player )
         state = tools.basic_action(prop )
         
-        return tools.defence_off(state )
+        return basic_strategy.defence_off(state )
 
     
 class SoloStrategy( Strategy ):
@@ -98,10 +90,19 @@ class SoloStrategy( Strategy ):
         prop =  tools.properties(state,id_team,id_player )
         state = tools.basic_action( prop )
         
-        return tools.solo(state )
+        return basic_strategy.solo(state )
     
     
-    
+class SolosupStrategy(Strategy):
+    def __init__( self ):
+        Strategy.__init__( self, "Solo" )
+
+    def compute_strategy( self, state, id_team, id_player ):
+        
+        prop =  tools.properties(state,id_team,id_player )
+        state = tools.basic_action( prop )
+        
+        return basic_strategy.solosup(state)
     
     
     

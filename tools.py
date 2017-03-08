@@ -61,7 +61,7 @@ class properties( object ):
 
     @property
     def ball_side( self ):
-        return not self.ball_area( GAME_WIDTH/2 )
+        return not self.ball_area( GAME_WIDTH/2 - 2 )
  
     
     @property
@@ -84,12 +84,11 @@ class properties( object ):
                 liste_tp.append( [idt,idp, dist] )
         return liste_tp
     
-    @property
-    def adv_players( self ):
+    def adv_players( self,where ):
         liste_ap = []
         for idt,idp in self.state.players : 
             if idt != self.key[0] :
-                dist = ( self.state.player_state( idt, idp ).position - self.my_position ).norm
+                dist = ( self.state.player_state( idt, idp ).position - where ).norm
                 liste_ap.append( [idt,idp, dist] )
         return liste_ap     
     
@@ -115,22 +114,21 @@ class properties( object ):
         dist_min =  self.dist_min( self.team_players )
         return self.state.player_state( dist_min[0],  dist_min[1] ).position
 
-    @property
-    def pos_dist_min_ad( self ) :
+    def pos_dist_min_ad( self, where ) :
 
-        dist_min =  self.dist_min( self.adv_players )
+        dist_min =  self.dist_min( self.adv_players( where ) )
         return self.state.player_state( dist_min[0],  dist_min[1] ).position
     
     @property
     def all_advplayers_behind( self ) : 
 
         cpt = 0;
-
-        for idt, idp, dist in self.adv_players : 
+        adv_players = self.adv_players(self.my_position)
+        for idt, idp, dist in adv_players : 
             if ( ( self.my_position - self.adgoal ).norm < ( self.state.player_state( idt,  idp ).position - self.adgoal ).norm ) : 
                 cpt += 1
 
-        return cpt == len( self.adv_players ) 
+        return cpt == len( adv_players ) 
 
 
     @property
@@ -167,6 +165,9 @@ class basic_action( object ):
         return SoccerAction( Vector2D( ), Vector2D( angle = angle_con, norm = norm ) )
      
     def go( self,p ):
+        dist_p = p - self.prop.my_position
+        if dist_p.norm < 1:
+            return SoccerAction( Vector2D( ),Vector2D( ) )
         return SoccerAction( p - self.prop.my_position,Vector2D( ) )
     
     @property    
@@ -176,6 +177,11 @@ class basic_action( object ):
     @property
     def go_anticipe_ball( self ) : 
         return SoccerAction( self.prop.anticipe_dir, Vector2D() ) 
+        
+    def anticipe_ball(self,rayon):
+        if self.prop.ball_vitesse.norm > rayon : 
+            return self.go_anticipe_ball
+        return self.go_ball
         
     #Calibrer le tir sur la distance par rapport au but
     @property
@@ -187,11 +193,13 @@ class basic_action( object ):
     def placement_def( self ):
         return self.go( ( self.prop.ball_position + self.prop.owngoal )/2 )
         
-    @property #PAS BESOIN POUR LE MOMENT
+    @property #PAS BESOIN POUR LE MOMENT PEUT ETRE A SUPPRIMER
     def placement_att( self ):
         if self.prop.ball_side :
             return self.go( Vector2D( GAME_WIDTH + 3, GAME_HEIGHT ) )
-            
+    
+        
+    
     @property
     def placement_att_sup( self ):
         nearplayer = self.prop.pos_dist_min 
@@ -204,11 +212,8 @@ class basic_action( object ):
         dir_conduite = point_direction - self.prop.my_position
         angle_con = dir_conduite.angle
 
-        if not self.prop.can_shoot and self.prop.ball_vitesse.norm > 1 : 
-           return self.go_anticipe_ball
         if not self.prop.can_shoot : 
-           return self.go_ball
-
+           return self.anticipe_ball(1)
         return SoccerAction( Vector2D( ), Vector2D( angle = angle_con, norm = norm ) )
 
     def grand_pont( self, angle, pos, angle_force, force ):
@@ -217,7 +222,17 @@ class basic_action( object ):
             return self.conduire( pos + Vector2D( 0, -angle_force ), force ) # j'ai remplacé 10 par 8 et -8
         return self.conduire( pos + Vector2D( 0, angle_force ), force )
         
-
+    def marquage( self, p ):
+        if self.prop.key[0] == 1 : 
+            return self.go( p + Vector2D( -10, 0 ) )
+        return self.go( p + Vector2D( 10, 0 ) )
+        
+    @property
+    def marquage_att( self ):
+        p = self.prop.pos_dist_min_ad( self.prop.owngoal )
+        return self.marquage( p )
+        
+        
 
     #IL FAUT SIMPFLIFIER
     #Probleme on fait avec des angles ce qui nest pas symetrique
@@ -225,7 +240,7 @@ class basic_action( object ):
     def dribbler_but( self  ):
 
         #dist_adv = self.prop.dist_min
-        pos_adv = self.prop.pos_dist_min_ad
+        pos_adv = self.prop.pos_dist_min_ad(self.prop.my_position)
         vec_adv = pos_adv - self.prop.my_position
         
         def_behind = ( ( self.prop.my_position - self.prop.adgoal ).norm < ( pos_adv - self.prop.adgoal ).norm )
@@ -244,7 +259,7 @@ class basic_action( object ):
     def solo_dribbler_but( self  ):
 
         #dist_adv = self.prop.dist_min
-        pos_adv = self.prop.pos_dist_min_ad
+        pos_adv = self.prop.pos_dist_min_ad(self.prop.my_position)
         vec_adv = pos_adv - self.prop.my_position
         
         def_behind = ( ( self.prop.my_position - self.prop.adgoal ).norm <= ( pos_adv - self.prop.adgoal ).norm )
@@ -260,10 +275,11 @@ class basic_action( object ):
 
         return self.conduire( self.prop.adgoal, 1 )
     
+    #balek
     @property
     def roulette( self ):
         
-        pos_adv = self.prop.pos_dist_min_ad
+        pos_adv = self.prop.pos_dist_min_ad(self.prop.my_position)
         vec_adv = pos_adv - self.prop.my_position
         if angle < 0 :
             return self.conduire( pos + Vector2D( 0, 8 ), 2.5 ) # j'ai remplacé 10 par 8 et -8
@@ -274,90 +290,7 @@ class basic_action( object ):
             
         
         
-def fonceur( basic_action ):
-    
-    if not basic_action.prop.can_shoot : 
-           return basic_action.go_ball
-           
-    return basic_action.shoot_goal
-    
-def passeur( basic_action ):
-    prop = basic_action.prop
-    if not prop.can_shoot : 
-           return basic_action.go_ball
-      
-    nearplayer = prop.pos_dist_min
-    return basic_action.passe( nearplayer )
-    
-def defence_off( basic_action ):
-    
-    prop = basic_action.prop
-    if prop.ball_area( 30 ):
-        return fonceur( basic_action )
-                      
-    if not prop.ball_move:
-        return basic_action.placement_def
 
-         
-    if not prop.can_shoot : 
-        return basic_action.go_anticipe_ball
-           
-    return basic_action.shoot_goal
-
-#NE FONCTIONNE PAS
-def solo( basic_action ):
-    prop = basic_action.prop
-         
-    if prop.dist_goal < 25 :
-        return fonceur( basic_action )
-    if prop.ball_area( 30 ) or prop.dist_ball < 20 :
-        return basic_action.solo_dribbler_but
-        
-    if not prop.ball_move:
-        return basic_action.placement_def
-    if prop.near_play_ball:
-        return basic_action.go_anticipe_ball
-
-    return basic_action.go_ball
-        
-        
-        
-        
-def conduite_but( basic_action ):
-
-    prop = basic_action.prop
-
-    return basic_action.conduire( prop.adgoal, 1 )
-    
-    
-#AMELIORER LE DFENSEURS POUR QU'IL FASSE DES PASSES ET NON DES DEGAGEMENTS
-def defence( basic_action ):
-    
-    prop = basic_action.prop
-    if prop.ball_area( 50 ) or prop.near_play_ball :
-        return passeur( basic_action ) 
-        
-    if prop.ball_side or not prop.ball_move:
-        return basic_action.placement_def
-         
-    if not prop.can_shoot : 
-        return basic_action.go_anticipe_ball
-           
-    return basic_action.shoot_goal
-        
-def striker( basic_action ):
-    
-    prop = basic_action.prop
-    
-    if prop.dist_goal < 30 :
-
-        return fonceur( basic_action )
-
-    if prop.ball_side or prop.dist_ball < 20  :
-
-        return basic_action.dribbler_but
-        
-    return basic_action.placement_att_sup
         
     
         

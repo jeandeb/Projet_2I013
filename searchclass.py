@@ -38,6 +38,10 @@ class ShootSearch(object):
 
         self.step_cpt = 0
 
+        self.cpt_y = 0
+
+        self.cpt_x = 0
+
 
 
 
@@ -65,6 +69,12 @@ class ShootSearch(object):
     def begin_round(self,team1,team2,state):
         """ engagement : position random du joueur et de la balle """
         position = Vector2D()
+
+        if self.cpt_y <= data.nb_y() :
+            self.simu.state.states[(1,0)].position = position.copy()
+            self.simu.state.states[(1,0)].vitesse = Vector2D()
+
+            self.cpt_y += 1
         self.simu.state.states[(1,0)].position = position.copy()
         self.simu.state.states[(1,0)].vitesse = Vector2D()
         self.simu.state.ball.position = position.copy()
@@ -79,6 +89,8 @@ class ShootSearch(object):
 
     def end_round(self,team1,team2,state):
 
+        if state.goal > 0:
+            self.but += 1
 
         """ si tous les tirs ont été fait a toutes les cases, enmatch"""
         if self.cpt >= self.step * self.nb_tirs_case : 

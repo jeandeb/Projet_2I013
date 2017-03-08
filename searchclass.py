@@ -20,7 +20,7 @@ class ShootSearch(object):
     def __init__(self):
         self.data = dataclass.discretedata()
 
-        self.strat = ShootingLearningStrat()
+        self.strat = strategy_learning.ShootingLearningStrat()
 
         team1 = SoccerTeam("Testeur")
         team1.add("Expe",self.strat)
@@ -34,16 +34,13 @@ class ShootSearch(object):
 
         self.nb_tirs_case = 10
 
-        self.step = data.nb_x() * data.nb_y()
+        self.step = self.data.nb_x * self.data.nb_y
 
         self.step_cpt = 0
 
         self.cpt_y = 0
 
         self.cpt_x = 0
-
-
-
 
 
     def start(self,visu=True):
@@ -70,15 +67,18 @@ class ShootSearch(object):
         """ engagement : position random du joueur et de la balle """
         position = Vector2D()
 
-        if self.cpt_y <= data.nb_y() :
-            self.simu.state.states[(1,0)].position = position.copy()
-            self.simu.state.states[(1,0)].vitesse = Vector2D()
-
+        if self.cpt_y <= self.data.nb_y :
             self.cpt_y += 1
-        self.simu.state.states[(1,0)].position = position.copy()
-        self.simu.state.states[(1,0)].vitesse = Vector2D()
-        self.simu.state.ball.position = position.copy()
+        else :
+            self.cpt_y = 0
 
+        if self.cpt_x <= self.data.nb_y :
+            self.cpt_x += 1
+        else :
+            self.simu.end_round()
+
+        self.simu.state.states[(1,0)].position = Vector2D( self.cpt_x * self.data.step_x, self.cpt_y * self.data.step_y )
+        self.simu.state.states[(1,0)].vitesse = Vector2D()
         self.last = self.simu.step
 
     def update_round(self,team1,team2,state):
@@ -92,7 +92,7 @@ class ShootSearch(object):
         if state.goal > 0:
             self.but += 1
 
-        """ si tous les tirs ont été fait a toutes les cases, enmatch"""
+        """ si tous les tirs ont ete fait a toutes les cases, enmatch"""
         if self.cpt >= self.step * self.nb_tirs_case : 
             self.simu.end_match()
 

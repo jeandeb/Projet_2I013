@@ -42,9 +42,9 @@ class discretedata( object ) :
 
 		return self.tab_proba[ case_x , case_y ]
 
-        def set_proba( self, proba, x, y ) :
-            case_x = x/self.nb_x
-            case_y = y/self.nb_y
+	def set_proba( self, proba, x, y ) :
+		case_x = x/self.nb_x
+		case_y = y/self.nb_y
 
-            self.tab_proba[ case_x , case_y ] = proba
+		self.tab_proba[ case_x , case_y ] = proba
 

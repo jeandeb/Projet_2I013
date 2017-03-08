@@ -44,7 +44,7 @@ class ShootSearch(object):
         
         self.max_norm = 3
         
-        self.max_tir = 2
+        self.max_tir = 10.0
 
 
     def start(self,visu=True):
@@ -62,8 +62,8 @@ class ShootSearch(object):
             cpt : nombre d'essais pour ce parametre
         """
         self.last = 0
-        self.proba = 0
-        self.but = 0
+        self.proba = 0.0
+        self.but = 0.0
         self.cpt = 0
         
 
@@ -76,7 +76,11 @@ class ShootSearch(object):
         if self.step_tir <= self.max_tir:
                 self.step_tir+=1
         else : 
-            self.proba = self.but / self.max_tir
+            self.proba = self.but/self.max_tir
+            print self.but
+            print self.proba
+            print self.max_tir
+            print self.data.get_proba(x , y )
             if self.data.get_proba(x , y ) < self.proba :
                 self.data.set_proba( self.proba, x, y )
                 self.data.set_norm( self.strat.norm, x, y )

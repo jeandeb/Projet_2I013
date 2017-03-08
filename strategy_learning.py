@@ -24,7 +24,7 @@ class ShootingLearningStrat( Strategy ) :
 
     def __init__( self, shoot=None ):
         self.name = "Shoot"
-        self.norm = 0
+        self.norm = 0 
 
     def compute_strategy(self,state,id_team,id_player):
 

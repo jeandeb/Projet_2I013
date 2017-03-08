@@ -36,7 +36,10 @@ class ShootSearch(object):
 
         self.step = data.nb_x() * data.nb_y()
 
-        self.step_cpt = 0;
+        self.step_cpt = 0
+
+
+
 
 
     def start(self,visu=True):
@@ -54,6 +57,7 @@ class ShootSearch(object):
             cpt : nombre d'essais pour ce parametre
         """
         self.last = 0
+        self.proba = 0
         self.but = 0
         self.cpt = 0
         
@@ -64,7 +68,7 @@ class ShootSearch(object):
         self.simu.state.states[(1,0)].position = position.copy()
         self.simu.state.states[(1,0)].vitesse = Vector2D()
         self.simu.state.ball.position = position.copy()
-        self.strat.norm = self.params[self.idx]
+
         self.last = self.simu.step
 
     def update_round(self,team1,team2,state):

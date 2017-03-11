@@ -3,7 +3,7 @@ from soccersimulator import SoccerTeam, Simulation, Strategy, show_simu, Vector2
 import tools
 import basic_strategy
 import strategy_learning
-import dataclass
+
 
 import numpy as np
 import logging
@@ -15,10 +15,10 @@ class ShootSearch(object):
         discr_step  : pas de discretisation du parametre
         nb_essais : nombre d'essais par parametre
     """
-    MAX_STEP = 1
+    MAX_STEP = 10
 
-    def __init__(self):
-        self.data = dataclass.discretedata()
+    def __init__( self, data ):
+        self.data = data
 
         self.strat = strategy_learning.ShootingLearningStrat()
 
@@ -32,7 +32,7 @@ class ShootSearch(object):
 
         self.simu.listeners+=self
 
-        self.nb_tirs_case = 10
+        self.nb_tirs_case = 30
 
         self.step = self.data.nb_x * self.data.nb_y
 
@@ -42,9 +42,9 @@ class ShootSearch(object):
 
         self.cpt_x = 0
         
-        self.max_norm = 3
+        self.max_norm = 8
         
-        self.max_tir = 10.0
+        self.max_tir = 30.0
 
 
     def start(self,visu=True):
@@ -77,21 +77,25 @@ class ShootSearch(object):
                 self.step_tir+=1
         else : 
             self.proba = self.but/self.max_tir
-            print self.but
-            print self.proba
-            print self.max_tir
-            print self.data.get_proba(x , y )
-            if self.data.get_proba(x , y ) < self.proba :
+            #print self.but
+            #print self.proba
+            #print self.max_tir
+            #print self.data.get_proba( x , y )
+            #print '------------'
+            if self.data.get_proba( x , y ) < self.proba :
                 self.data.set_proba( self.proba, x, y )
                 self.data.set_norm( self.strat.norm, x, y )
             self.step_tir = 0
             if self.strat.norm <= self.max_norm :
-                self.strat.norm+=1
+                self.strat.norm+=0.2
                 self.but = 0
             else :
                 self.strat.norm = 0
                 if self.cpt_y <= self.data.nb_y : 
                     self.cpt_y += 1
+                    #print x
+                    #print y
+                    #print '------------'
             
                 else :
                     self.cpt_x += 1
@@ -99,7 +103,7 @@ class ShootSearch(object):
                 
     
 
-        
+        #print "x =  "+ str(x) + " y = " + str(y) + "norm = " + str(self.data.get_norm( x , y )) + " proba = " + str(self.data.get_proba( x , y ) )
         self.cpt +=1
         position = Vector2D( x, y )
         

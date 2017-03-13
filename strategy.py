@@ -29,7 +29,7 @@ class CenterStrategy( Strategy ) :
 
     def compute_strategy( self, state, id_team, id_player ):
   
-        return SoccerAction( Vector2D.create_random( -0.5, 0.5 ), Vector2D.create_random( -0.5, 0.5 ) )
+        return SoccerAction( Vector2D(), Vector2D.create_random( -0.5, 0.5 ) )
         
 class FonceurStrategy( Strategy ):
     def __init__( self ):

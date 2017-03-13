@@ -15,7 +15,7 @@ class ShootSearch(object):
         discr_step  : pas de discretisation du parametre
         nb_essais : nombre d'essais par parametre
     """
-    MAX_STEP = 10
+    MAX_STEP = 40
 
     def __init__( self, data ):
         self.data = data
@@ -35,15 +35,15 @@ class ShootSearch(object):
 
         self.step = self.data.nb_x * self.data.nb_y
 
-        self.step_tir = 0
+        self.step_tir = 0.0
 
         self.cpt_y = 0
 
         self.cpt_x = 0
         
-        self.max_norm = 4
-        
-        self.max_tir = 1.0
+        self.max_norm = 6
+        self.min_norm = self.strat.norm
+        self.max_tir = 4.0
         
         self.x = 0.0
         self.y = 0.0
@@ -90,21 +90,25 @@ class ShootSearch(object):
     def end_round(self,team1,team2,state):
         
         if state.goal > 0:
-            self.but += 1
-        if self.step_tir <= self.max_tir:
-                self.step_tir+=1
+            self.but += 1.
+        if self.step_tir < self.max_tir :
+                self.step_tir += 1.
                 return
-        proba = self.but/self.max_tir
+        proba = self.but/(self.step_tir+1)
+        #print self.but
+        #print self.step_tir
+        #print proba
+        #print "----------"
         if self.data.get_proba( self.x, self.y) < proba :
                     self.data.set_proba( proba, self.x, self.y )
                     self.data.set_norm( self.strat.norm, self.x, self.y )
         self.step_tir = 0
         self.but = 0
         if self.strat.norm < self.max_norm :
-                    self.strat.norm+=1
+                    self.strat.norm += 1
                     self.but = 0
         else :
-            self.strat.norm = 0
+            self.strat.norm = self.min_norm
             if self.cpt_y < self.data.nb_y : 
                 self.cpt_y += 1
             else :

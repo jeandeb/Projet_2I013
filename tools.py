@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-<
 
 
-
+import pickle
 #from soccersimulator.strategies  import Strategy
 from soccersimulator.mdpsoccer import SoccerTeam, Simulation, SoccerAction
 #from soccersimulator.gui import SimuGUI,show_state,show_simu
@@ -21,6 +21,8 @@ maxBallAcceleration = 5 # Acceleration maximale de la balle
 
 but2 = Vector2D( GAME_WIDTH, GAME_HEIGHT/2. )
 but1 = Vector2D( 0, GAME_HEIGHT/2 )
+data_shoot = pickle.load( open( "tab_shoot.p", "rb" ) )
+
 
 class properties( object ):
     def __init__( self,state,idteam,idplayer ):
@@ -40,6 +42,14 @@ class properties( object ):
         self.ball_position = self.state.ball.position
         self.ball_vitesse = self.state.ball.vitesse
         
+    @property
+    def pos_x( self ):
+        return self.my_position.x
+
+    @property
+    def pos_y( self ):
+        return self.my_position.y
+
     @property
     def vector_ball( self ) :
         return  self.ball_position - self.my_position
@@ -69,6 +79,30 @@ class properties( object ):
         if ( self.vector_ball ).norm >= PLAYER_RADIUS + BALL_RADIUS:
                 return False
         return True
+
+    @property
+    def get_x_learn(self) : 
+        x = self.pos_x
+        if self.key[0] == 2 :
+            x = GAME_WIDTH - x
+        return x
+
+    @property
+    def get_y_learn(self) : 
+        y = self.pos_y
+        if self.key[0] == 2 :
+            y = GAME_HEIGHT - y
+        return y
+
+    @property
+    def can_shoot_learn( self ) :
+        x = self.get_x_learn
+        y = self.get_y_learn
+        if not self.ball_side :
+            return False
+        if self.can_shoot and data_shoot.get_proba( x, y ) > 0.9  :
+            return True
+        return False
          
     @property
     def ball_move( self ):
@@ -145,12 +179,6 @@ class properties( object ):
         return True
         
 
-            
-    
-   
-    
-    
-
 class basic_action( object ): 
     
     def __init__( self,properties ):
@@ -188,7 +216,17 @@ class basic_action( object ):
     def shoot_goal( self ):
         vector_shoot = self.prop.adgoal - self.prop.my_position
         return SoccerAction( Vector2D( ), vector_shoot.normalize()*2 )
-        
+      
+    @property
+    def shoot_learn( self ) :
+
+        x = self.prop.get_y_learn
+        y = self.prop.get_y_learn
+    
+        norm = data_shoot.get_norm( x, y )
+        return SoccerAction( Vector2D( ), self.prop.vector_goal.normalize()*norm )
+
+
     @property
     def placement_def( self ):
         return self.go( ( self.prop.ball_position + self.prop.owngoal )/2 )

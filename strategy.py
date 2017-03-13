@@ -95,7 +95,7 @@ class SoloStrategy( Strategy ):
     
 class SolosupStrategy(Strategy):
     def __init__( self ):
-        Strategy.__init__( self, "Solo" )
+        Strategy.__init__( self, "Solosup" )
 
     def compute_strategy( self, state, id_team, id_player ):
         
@@ -105,10 +105,25 @@ class SolosupStrategy(Strategy):
         return basic_strategy.solosup(state)
     
     
+
+class DefPlacement(Strategy):
+    def __init__( self ):
+        Strategy.__init__( self, "DefPlacement" )
+
+    def compute_strategy( self, state, id_team, id_player ):
+        
+        prop =  tools.properties(state,id_team,id_player )
+        state = tools.basic_action( prop )
+        
+        return basic_strategy.placementdef(state)  
     
     
-    
-    
+class StaticStrategy(Strategy):
+    def __init__(self):
+        super(StaticStrategy,self).__init__("Static")
+    def compute_strategy(self,state,id_team,id_player):
+        return SoccerAction()
+
     
     
     

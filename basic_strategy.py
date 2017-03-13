@@ -119,3 +119,9 @@ def striker( basic_action ):
         return basic_action.dribbler_but
         
     return basic_action.placement_att_sup
+    
+    
+    
+    
+def placementdef(basic_action):
+    return basic_action.placement_def

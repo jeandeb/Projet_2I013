@@ -43,7 +43,12 @@ class properties( object ):
     @property
     def vector_ball( self ) :
         return  self.ball_position - self.my_position
-        
+    @property
+    def vector_ball_but(self):
+        return self.ball_position -self.adgoal
+    @property
+    def dist_ball_but(self):
+        return self.vector_ball_but.norm
     @property
     def dist_ball( self ) :
         return  self.vector_ball.norm
@@ -118,6 +123,9 @@ class properties( object ):
 
         dist_min =  self.dist_min( self.adv_players( where ) )
         return self.state.player_state( dist_min[0],  dist_min[1] ).position
+    @property
+    def norm_min_ad(self):
+        return (self.my_position-self.pos_dist_min_ad(self.my_position)).norm
     
     @property
     def all_advplayers_behind( self ) : 

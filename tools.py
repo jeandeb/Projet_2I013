@@ -56,7 +56,7 @@ class properties( object ):
         return self.adgoal - self.my_position
 
     @property 
-    def dist_goal( self ):
+    def dist_goal( self ): #Par rapport à ma posititon
         return self.vector_goal.norm
 
     @property
@@ -187,7 +187,7 @@ class basic_action( object ):
     @property
     def shoot_goal( self ):
         vector_shoot = self.prop.adgoal - self.prop.my_position
-        return SoccerAction( Vector2D( ), vector_shoot/2 )
+        return SoccerAction( Vector2D( ), vector_shoot.normalize()*2 )
         
     @property
     def placement_def( self ):
@@ -219,7 +219,7 @@ class basic_action( object ):
     def grand_pont( self, angle, pos, angle_force, force ):
 
         if angle < 0 :
-            return self.conduire( pos + Vector2D( 0, -angle_force ), force ) # j'ai remplacé 10 par 8 et -8
+            return self.conduire( pos + Vector2D( 0, -angle_force ), force )
         return self.conduire( pos + Vector2D( 0, angle_force ), force )
         
     def marquage( self, p ):
@@ -244,11 +244,11 @@ class basic_action( object ):
         vec_adv = pos_adv - self.prop.my_position
         
         def_behind = ( ( self.prop.my_position - self.prop.adgoal ).norm < ( pos_adv - self.prop.adgoal ).norm )
-        if vec_adv.norm < 10 and not def_behind : #valeur avant 30
-            return self.grand_pont( vec_adv.angle, pos_adv, 10, 2 )
+        if vec_adv.norm < 20 and not def_behind : #valeur avant 30
+            return self.grand_pont( vec_adv.angle, pos_adv, 5, 1.3 )
 
-        if vec_adv.norm < 30 and not def_behind:
-            return self.grand_pont( vec_adv.angle, pos_adv, 30, 1 )            
+       # if vec_adv.norm < 30 and not def_behind:
+        #    return self.grand_pont( vec_adv.angle, pos_adv, 30, 1 )            
 
         if self.prop.all_advplayers_behind :
             return self.conduire( self.prop.adgoal, 2.2 )

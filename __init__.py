@@ -8,7 +8,7 @@ import strategy
 def get_team( i ):
     MFC = SoccerTeam( name = "MFC"  )
     if i==1:
-        MFC.add( "Johny", strategy.SoloStrategy( ) ) 
+        MFC.add( "Cavani", strategy.FonceurStrategy( ) ) 
     if i == 2 :
         MFC.add( "Yannis", strategy.DefenceStrategy( ) )
         MFC.add( "Cavani", strategy.StrikerStrategy( ) )

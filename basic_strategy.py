@@ -16,17 +16,26 @@ def passeur( basic_action ):
 def defence_off( basic_action ):
     
     prop = basic_action.prop
-    if prop.ball_area( 30 ):
+    if prop.dist_goal < 30:
         return fonceur( basic_action )
-                      
-    if not prop.ball_move:
-        return basic_action.placement_def
+    
+    if prop.dist_ball < 3 :
+        return basic_action.solo_dribbler_but
+    if prop.ball_area( 50 ) or prop.near_play_ball:
+        return basic_action.go_anticipe_ball     
+    
 
-         
-    if not prop.can_shoot : 
-        return basic_action.go_anticipe_ball
-           
-    return basic_action.shoot_goal
+        
+    return basic_action.placement_def
+        
+
+                
+     
+   # if not prop.can_shoot : 
+    #    return basic_action.go_anticipe_ball
+   
+   # return basic_action.go_anticipe_ball       
+   # return basic_action.shoot_goal
 
 #NE FONCTIONNE PAS
 def solo( basic_action ):

@@ -1,14 +1,16 @@
+
+
 def fonceur( basic_action ):
     
     if not basic_action.prop.can_shoot : 
-           return basic_action.go_ball
+           return basic_action.go_anticipe_ball
            
     return basic_action.shoot_goal
     
 def passeur( basic_action ):
     prop = basic_action.prop
     if not prop.can_shoot : 
-           return basic_action.go_ball
+           return basic_action.go_anticipe_ball
       
     nearplayer = prop.pos_dist_min
     return basic_action.passe( nearplayer )
@@ -29,8 +31,7 @@ def defence_off( basic_action ):
     return basic_action.placement_def
         
 
-                
-     
+         
    # if not prop.can_shoot : 
     #    return basic_action.go_anticipe_ball
    
@@ -40,27 +41,17 @@ def defence_off( basic_action ):
 #NE FONCTIONNE PAS
 def solo( basic_action ):
     prop = basic_action.prop
-         
-   
-   
-   
-   
-   
-   
-   
-   
-    if prop.dist_goal < 25 :
-        return fonceur( basic_action )
-    if prop.ball_area( 30 ) or prop.dist_ball < 20 :
-        return basic_action.solo_dribbler_but
-        
-    if not prop.ball_move:
-        return basic_action.placement_def
-        
-    if prop.near_play_ball:
-        return basic_action.go_anticipe_ball
 
-    return basic_action.go_ball
+    if not prop.ball_move : 
+        return fonceur( basic_action )
+        
+    if prop.can_shoot_learn  :
+        return basic_action.shoot_learn
+
+    if not prop.ball_area( 20 ) :
+        return basic_action.solo_dribbler_but 
+
+    return basic_action.anticipe_ball( 2 )
         
 def solosup(basic_action):
     prop=basic_action.prop
@@ -88,31 +79,26 @@ def conduite_but( basic_action ):
 def defence( basic_action ):
     
     prop = basic_action.prop
+
     if prop.near_play_ball :#or prop.ball_area( 20 ):
         return passeur( basic_action ) 
 
-
-    if  prop.ball_side:
-        
+    if prop.ball_side:
         return basic_action.placement_def
 
-        
+    if not prop.ball_move : 
+       return basic_action.anticipe_ball(1)   
+
     if not prop.ball_side: #or not prop.ball_move:
         return basic_action.marquage_att
         
-   
-    #if not prop.ball_move : 
-     #   return basic_action.anticipe_ball(0.8)   
-        
-    #return basic_action.go_ball
         
 def striker( basic_action ):
     
     prop = basic_action.prop
     
-    if prop.dist_goal < 30 :
-
-        return fonceur( basic_action )
+    if prop.can_shoot_learn  :
+        return basic_action.shoot_learn
 
     if prop.ball_side or prop.dist_ball < 20  :
 

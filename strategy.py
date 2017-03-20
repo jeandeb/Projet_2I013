@@ -115,8 +115,7 @@ class DefPlacement(Strategy):
         prop =  tools.properties(state,id_team,id_player )
         state = tools.basic_action( prop )
         
-        return basic_strategy.placementdef(state)  
-    
+        return basic_strategy.placementdef(state)      
     
 class StaticStrategy(Strategy):
     def __init__(self):

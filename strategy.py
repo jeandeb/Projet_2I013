@@ -41,7 +41,7 @@ class FonceurStrategy( Strategy ):
         prop =  tools.properties(state,id_team,id_player )
         state = tools.basic_action(prop )
         
-        return basic_strategy.fonceur( state )
+        return basic_strategy.fonceur_base( state )
 
 class StrikerStrategy( Strategy ):
     def __init__( self ):
@@ -123,11 +123,44 @@ class StaticStrategy(Strategy):
     def compute_strategy(self,state,id_team,id_player):
         return SoccerAction()
 
+
+#STRATEGIES 4 VS 4
+class CenterStrategy( Strategy ) : 
+    def __init__( self ):
+
+        Strategy.__init__( self, "Random" )
+
+    def compute_strategy( self, state, id_team, id_player ):
+  
+        prop =  tools.properties(state,id_team,id_player )
+        state = tools.basic_action( prop )
+        
+        return basic_strategy.center(state )
     
     
+class Striker4Strategy( Strategy ):
+    def __init__( self ):
+        Strategy.__init__( self, "Striker" )
+            
+    def compute_strategy( self, state, id_team, id_player ):
+        
+        prop =  tools.properties(state,id_team,id_player )
+        state = tools.basic_action(prop )
+        
+        return basic_strategy.striker_4(state )
     
-    
-    
+
+class Defence4Strategy( Strategy ):
+
+    def __init__( self ):
+        Strategy.__init__( self, "Defence" )
+
+    def compute_strategy( self, state, id_team, id_player ):
+        
+        prop =  tools.properties(state,id_team,id_player )
+        state = tools.basic_action(prop )
+        
+        return basic_strategy.defence_4(state )
     
     
     

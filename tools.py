@@ -51,6 +51,12 @@ class properties( object ):
         return self.my_position.y
 
     @property
+    def ball_center( self ):
+        if self.ball_position.x == GAME_WIDTH/2 and self.ball_position.y == GAME_HEIGHT/2 :
+            return True
+        return False
+
+    @property
     def vector_ball( self ) :
         return  self.ball_position - self.my_position
     @property
@@ -78,7 +84,6 @@ class properties( object ):
     def ball_side( self ):
         return not self.ball_area( GAME_WIDTH/2 - 2 )
  
-    
     @property
     def can_shoot( self ) :
         if ( self.vector_ball ).norm >= PLAYER_RADIUS + BALL_RADIUS:
@@ -114,12 +119,11 @@ class properties( object ):
         return self.state.ball.vitesse.x > 0 or self.state.ball.vitesse.y > 0  
     
     #MAUVAIS CODAGE, IL Y A UN COPIER COLLER, ESSAYER DE FUSIONNER LES DEUX FONCTIONS, ET QU'ELLES MARCHENT MEME LORQU'IL N'Y A QU'UN SEUL JOUEUR
-    @property
-    def team_players( self ):
+    def team_players( self, where ):
         liste_tp = []
         for idt,idp in self.state.players : 
             if idt == self.key[0] and idp != self.key[1] :
-                dist = (  self.state.player_state( idt, idp ).position - self.my_position ).norm
+                dist = (  self.state.player_state( idt, idp ).position - where ).norm
                 liste_tp.append( [idt,idp, dist] )
         return liste_tp
     
@@ -147,10 +151,9 @@ class properties( object ):
 
         return [ idteam, idmin ]
     
-    @property
-    def pos_dist_min( self ) :
+    def pos_dist_min( self, where ) :
 
-        dist_min =  self.dist_min( self.team_players )
+        dist_min =  self.dist_min( self.team_players( where ) )
         return self.state.player_state( dist_min[0],  dist_min[1] ).position
 
     def pos_dist_min_ad( self, where ) :
@@ -185,7 +188,34 @@ class properties( object ):
                 if dist < self.dist_ball:
                     return False
         return True
-        
+
+    @property
+    def team_ball( self ):
+        dist_min_team =  self.dist_min( self.team_players( self.ball_position ) )
+        dist_min_ad = self.dist_min( self.adv_players( self.ball_position ) )
+        if dist_min_team < dist_min_ad  :
+            return True
+        return False
+    @property
+    def has_ball( self ):
+        dist_min_team =  self.dist_min( self.team_players( self.ball_position ) )
+        dist_min_ad = self.dist_min( self.adv_players( self.ball_position ) )
+        dist_min_self = ( self.my_position - self.ball_position ).norm
+        if dist_min_team <= dist_min_ad  and dist_min_self <= dist_min_team :
+            return True
+        return False
+
+    @property
+    def is_striker( self ):
+        dist_min_team =  self.dist_min( self.team_players( self.adgoal ) )
+        dist_min_self = ( self.my_position - self.adgoal ).norm
+        if dist_min_self <= dist_min_team :
+            return True
+        return False
+
+
+    
+  
 
 class basic_action( object ): 
     
@@ -205,6 +235,18 @@ class basic_action( object ):
         if dist_p.norm < 1:
             return SoccerAction( Vector2D( ),Vector2D( ) )
         return SoccerAction( p - self.prop.my_position,Vector2D( ) )
+
+    @property
+    def campeur( self ) :
+
+        pos = self.prop.adgoal + Vector2D( 30, 0 ) 
+        if self.prop.key[0] == 1 : 
+            pos = self.prop.adgoal + Vector2D( -30, 0 ) 
+       
+        dist_p =  pos - self.prop.my_position
+        if dist_p.norm < 1:
+            return SoccerAction( Vector2D( ),Vector2D( ) )
+        return self.go( pos )
     
     @property    
     def go_ball( self ) : 
@@ -220,6 +262,11 @@ class basic_action( object ):
         return self.go_ball
         
     #Calibrer le tir sur la distance par rapport au but
+    @property
+    def shoot_goal_max( self ):
+        vector_shoot = self.prop.adgoal - self.prop.my_position
+        return SoccerAction( Vector2D( ), vector_shoot )
+
     @property
     def shoot_goal( self ):
         vector_shoot = self.prop.adgoal - self.prop.my_position
@@ -248,7 +295,21 @@ class basic_action( object ):
     
     @property
     def placement_att_sup( self ):
-        nearplayer = self.prop.pos_dist_min 
+        nearplayer = self.prop.pos_dist_min( self.prop.my_position ) 
+        if self.prop.key[0] == 1 : 
+            return self.go( nearplayer + Vector2D( 50, 0 ) )
+        return self.go( nearplayer + Vector2D( -50, 0 ) )
+
+    @property
+    def placement_center( self ):
+        nearplayer = self.prop.pos_dist_min( self.prop.owngoal ) 
+        if self.prop.key[0] == 1 : 
+            return self.go( nearplayer + Vector2D( 50, 0 ) )
+        return self.go( nearplayer + Vector2D( -50, 0 ) )
+
+    @property
+    def placement_att_sup_4( self ):
+        nearplayer = self.prop.pos_dist_min( self.prop.my_position ) 
         if self.prop.key[0] == 1 : 
             return self.go( nearplayer + Vector2D( 50, 0 ) )
         return self.go( nearplayer + Vector2D( -50, 0 ) )

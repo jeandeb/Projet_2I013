@@ -27,8 +27,10 @@ class StaticStrategy(Strategy):
 
 team1 = SoccerTeam("forbach")
 strat_j1 = KeyboardStrategy()
-strat_j1.add('a',strategy.FonceurStrategy())
-strat_j1.add('z',strategy.DefPlacement())
+strat_j1.add('x',strategy.AllerBut())
+strat_j1.add('c',strategy.GoBall())
+strat_j1.add('s',strategy.DefPlacement())
+strat_j1.add('d',strategy.Dribble())
 team1.add("Yannis",strat_j1)
 #team1.add("Jexp 2",StaticStrategy())
 team2 = SoccerTeam("real_madrid")
@@ -40,7 +42,6 @@ team2.add("Fonceur", strategy.FonceurStrategy())
 ### Transformation d'un etat en features : state,idt,idp -> R^d
 def my_get_features(state,idt,idp):
     """ extraction du vecteur de features d'un etat, ici distance a la balle, distance au but, distance balle but """
-    
     
     prop=tools.properties(state,idt,idp)
     
@@ -59,6 +60,7 @@ def entrainement(fn):
     # sauvegarde dans un fichier
     dump_jsonz(training_states,fn)
 
+
 def apprentissage(fn):
     ### chargement d'un fichier sauvegarder
     states_tuple = load_jsonz(fn)
@@ -70,11 +72,12 @@ def apprentissage(fn):
     genere_dot(dt,"test_arbre.dot")
     return dt
 
+
 def jouer_arbre(dt):
     ####
     # Utilisation de l'arbre
     ###
-    dic = {"Fonceur":strategy.FonceurStrategy(),"DefPlacement":strategy.DefPlacement(),"Static":StaticStrategy()}
+    dic = {"AllerBut":strategy.AllerBut(),"DefPlacement":strategy.DefPlacement(),"Goball":strategy.GoBall(), "Dribbler":strategy.Dribble(), "AllerBut":strategy.AllerBut()}
     treeStrat1 = DTreeStrategy(dt,dic,my_get_features)
     #treeStrat2 = DTreeStrategy(dt,dic,my_get_features)
     team3 = SoccerTeam("Arbre Team")
@@ -84,7 +87,7 @@ def jouer_arbre(dt):
     show_simu(simu)
 
 if __name__=="__main__":
-    fn = "test_states.jz"
+    fn = "test_statesjean.jz"
     if not os.path.isfile(fn):
         entrainement(fn)
     dt = apprentissage(fn)

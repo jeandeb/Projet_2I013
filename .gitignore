@@ -2,3 +2,5 @@
 soccer-simulator-0.9.2014.linux-x86_64.tar.gz
 
 test.py
+
+*.pyc

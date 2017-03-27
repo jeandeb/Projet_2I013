@@ -339,7 +339,15 @@ class basic_action( object ):
         p = self.prop.pos_dist_min_ad( self.prop.owngoal )
         return self.marquage( p )
         
-        
+    @property
+    def aller_but( self ):
+        return self.conduire( self.prop.adgoal, 2.2 )
+
+    @property
+    def pousse_la_balle( self ):
+        pos_adv = self.prop.pos_dist_min_ad(self.prop.my_position)
+        vec_adv = pos_adv - self.prop.my_position
+        return self.grand_pont( vec_adv.angle, pos_adv, 5, 1.3 )
 
     #IL FAUT SIMPFLIFIER
     #Probleme on fait avec des angles ce qui nest pas symetrique

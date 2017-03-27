@@ -104,18 +104,7 @@ class SolosupStrategy(Strategy):
         
         return basic_strategy.solosup(state)
     
-    
-
-class DefPlacement(Strategy):
-    def __init__( self ):
-        Strategy.__init__( self, "DefPlacement" )
-
-    def compute_strategy( self, state, id_team, id_player ):
-        
-        prop =  tools.properties(state,id_team,id_player )
-        state = tools.basic_action( prop )
-        
-        return basic_strategy.placementdef(state)      
+      
     
 class StaticStrategy(Strategy):
     def __init__(self):
@@ -164,8 +153,63 @@ class Defence4Strategy( Strategy ):
     
     
     
-    
+#STRATEGIES POUR ARBRES 
+
+class DefPlacement(Strategy):
+    def __init__( self ):
+        Strategy.__init__( self, "DefPlacement" )
+
+    def compute_strategy( self, state, id_team, id_player ):
+        
+        prop =  tools.properties(state,id_team,id_player )
+        state = tools.basic_action( prop )
+        
+        return basic_strategy.placementdef(state)    
+
+class Shoot( Strategy ):
+    def __init__( self ):
+        Strategy.__init__( self, "Conduire" )
+
+    def compute_strategy( self, state, id_team, id_player ):
+
+        prop =  tools.properties(state,id_team,id_player )
+        state = tools.basic_action( prop )
+
+        return state.shoot_learn
 
 
+class Dribble( Strategy ):
+    def __init__( self ):
+        Strategy.__init__( self, "Conduire" )
 
+    def compute_strategy( self, state, id_team, id_player ):
 
+        prop =  tools.properties(state,id_team,id_player )
+        state = tools.basic_action( prop )
+        if prop.can_shoot_learn  :
+            return state.shoot_learn
+        return state.pousse_la_balle
+
+class AllerBut( Strategy ):
+    def __init__( self ):
+        Strategy.__init__( self, "Conduire" )
+
+    def compute_strategy( self, state, id_team, id_player ):
+
+        prop =  tools.properties(state,id_team,id_player )
+        state = tools.basic_action( prop )
+        if prop.can_shoot_learn  :
+            return state.shoot_learn
+        return state.aller_but
+
+class GoBall( Strategy ):
+    def __init__( self ):
+        Strategy.__init__( self, "Conduire" )
+
+    def compute_strategy( self, state, id_team, id_player ):
+
+        prop =  tools.properties(state,id_team,id_player )
+        state = tools.basic_action( prop )
+        if prop.can_shoot_learn  :
+            return state.shoot_learn
+        return state.anticipe_ball( 1.5 )

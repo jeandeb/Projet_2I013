@@ -18,7 +18,7 @@ expe.start( False )
 print data.tab_proba
 print data.tab_norm
 
-pickle.dump( data, open( "tab_shoot2.p", "wb" ) )
+pickle.dump( data, open( "tableau_learning/tab_shoot2.p", "wb" ) )
 #for i in range( expe.data.nb_x ) :
  #   for j in range( expe.data.nb_y ) :
   #      x = i * expe.data.step_x

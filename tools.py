@@ -21,7 +21,7 @@ maxBallAcceleration = 5 # Acceleration maximale de la balle
 
 but2 = Vector2D( GAME_WIDTH, GAME_HEIGHT/2. )
 but1 = Vector2D( 0, GAME_HEIGHT/2 )
-data_shoot = pickle.load( open( "tab_shoot.p", "rb" ) )
+data_shoot = pickle.load( open( "tableau_learning/tab_shoot2.p", "rb" ) )
 
 
 class properties( object ):

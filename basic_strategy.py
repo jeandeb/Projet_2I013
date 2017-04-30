@@ -8,7 +8,7 @@ def fonceur( basic_action ):
     if not basic_action.prop.can_shoot : 
            return basic_action.anticipe_ball( 2 )
            
-    return basic_action.shoot_goal
+    return basic_action.shoot_learn
 
 def fonceur_base( basic_action ):
     prop = basic_action.prop

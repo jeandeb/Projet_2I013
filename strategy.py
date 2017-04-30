@@ -41,7 +41,7 @@ class FonceurStrategy( Strategy ):
         prop =  tools.properties(state,id_team,id_player )
         state = tools.basic_action(prop )
         
-        return basic_strategy.fonceur_base( state )
+        return basic_strategy.fonceur( state )
 
 class StrikerStrategy( Strategy ):
     def __init__( self ):
@@ -168,7 +168,7 @@ class DefPlacement(Strategy):
 
 class Shoot( Strategy ):
     def __init__( self ):
-        Strategy.__init__( self, "Conduire" )
+        Strategy.__init__( self, "Shoot" )
 
     def compute_strategy( self, state, id_team, id_player ):
 
@@ -180,36 +180,39 @@ class Shoot( Strategy ):
 
 class Dribble( Strategy ):
     def __init__( self ):
-        Strategy.__init__( self, "Conduire" )
+        Strategy.__init__( self, "Dribble" )
 
     def compute_strategy( self, state, id_team, id_player ):
 
         prop =  tools.properties(state,id_team,id_player )
         state = tools.basic_action( prop )
+
         if prop.can_shoot_learn  :
             return state.shoot_learn
         return state.pousse_la_balle
 
 class AllerBut( Strategy ):
     def __init__( self ):
-        Strategy.__init__( self, "Conduire" )
+        Strategy.__init__( self, "AllerBut" )
 
     def compute_strategy( self, state, id_team, id_player ):
 
         prop =  tools.properties(state,id_team,id_player )
         state = tools.basic_action( prop )
+
         if prop.can_shoot_learn  :
             return state.shoot_learn
         return state.aller_but
 
 class GoBall( Strategy ):
     def __init__( self ):
-        Strategy.__init__( self, "Conduire" )
+        Strategy.__init__( self, "GoBall" )
 
     def compute_strategy( self, state, id_team, id_player ):
 
         prop =  tools.properties(state,id_team,id_player )
         state = tools.basic_action( prop )
+
         if prop.can_shoot_learn  :
             return state.shoot_learn
         return state.anticipe_ball( 1.5 )

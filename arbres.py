@@ -77,7 +77,7 @@ def jouer_arbre(dt):
     ####
     # Utilisation de l'arbre
     ###
-    dic = {"AllerBut":strategy.AllerBut(),"DefPlacement":strategy.DefPlacement(),"Goball":strategy.GoBall(), "Dribbler":strategy.Dribble(), "AllerBut":strategy.AllerBut()}
+    dic = {"AllerBut":strategy.AllerBut(),"DefPlacement":strategy.DefPlacement(),"Goball":strategy.GoBall(), "Dribbler":strategy.Dribble()}
     treeStrat1 = DTreeStrategy(dt,dic,my_get_features)
     #treeStrat2 = DTreeStrategy(dt,dic,my_get_features)
     team3 = SoccerTeam("Arbre Team")

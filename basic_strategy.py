@@ -3,21 +3,20 @@
 def fonceur( basic_action ):
     prop = basic_action.prop
     if not prop.ball_move : 
-        print "1"
         return fonceur_base( basic_action )
 
     if not basic_action.prop.can_shoot :
-        print  "2"
         return basic_action.anticipe_ball( 2 )
            
     return basic_action.shoot_learn
 
 def fonceur_base( basic_action ):
     prop = basic_action.prop
-    if not basic_action.prop.can_shoot : 
+    if not basic_action.prop.can_shoot and basic_action.prop.can_shoot.ball_move : 
            return basic_action.go_ball
-           
-    return basic_action.shoot_goal_max
+    if  basic_action.prop.can_shoot : 
+        return basic_action.shoot_goal_max
+    return basic_action.go_ball
     
 def passeur( basic_action ):
 
@@ -82,6 +81,7 @@ def solo( basic_action ):
 
     if not prop.ball_move and prop.ball_center : 
         return fonceur_base( basic_action )
+
         
     if prop.can_shoot_learn  :
         return basic_action.shoot_learn

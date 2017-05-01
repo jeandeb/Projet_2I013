@@ -4,6 +4,10 @@ from soccersimulator.strategies  import Strategy
 from soccersimulator.mdpsoccer import SoccerTeam, Simulation, SoccerAction
 from soccersimulator.gui import SimuGUI,show_state,show_simu
 from soccersimulator.utils import Vector2D
+from soccersimulator import load_jsonz
+from arbres_utils import DTreeStrategy, build_apprentissage, apprend_arbre, genere_dot
+import arbres
+import entrainement_arbre
 import tools
 import basic_strategy
 
@@ -30,7 +34,23 @@ class CenterStrategy( Strategy ) :
     def compute_strategy( self, state, id_team, id_player ):
   
         return SoccerAction( Vector2D(), Vector2D.create_random( -0.5, 0.5 ) )
+
         
+class ArbreStrategy(Strategy):
+    def __init__(self):
+        Strategy.__init__( self, "Arbre" )
+        self.get_features=entrainement_arbre.my_get_features
+        self.fn = "arbre_qui_marche/solo_arbre.jz"
+        self.tree = arbres.apprentissage( self.fn )
+        self.dic = {"Fonceur":FonceurStrategy(),"DefPlacement":DefPlacement(),"Static":StaticStrategy()}
+
+    def compute_strategy(self, state, id_team, id_player):
+        label = self.tree.predict([self.get_features(state,id_team,id_player)])[0]
+        if label not in self.dic:
+            logger.error("Erreur : strategie %s non trouve" %(label,))
+            return SoccerAction()
+        return self.dic[label].compute_strategy(state,id_team,id_player)
+
 class FonceurStrategy( Strategy ):
     def __init__( self ):
 

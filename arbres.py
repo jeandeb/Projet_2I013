@@ -25,16 +25,16 @@ class StaticStrategy(Strategy):
 ## Constructioon des equipes
 #######
 
-team1 = SoccerTeam("forbach")
-strat_j1 = KeyboardStrategy()
-strat_j1.add('x',strategy.AllerBut())
-strat_j1.add('c',strategy.GoBall())
-strat_j1.add('s',strategy.DefPlacement())
-strat_j1.add('d',strategy.Dribble())
-team1.add("Yannis",strat_j1)
+#team1 = SoccerTeam("forbach")
+#strat_j1 = KeyboardStrategy()
+#strat_j1.add('x',strategy.AllerBut())
+#strat_j1.add('c',strategy.GoBall())
+#strat_j1.add('s',strategy.DefPlacement())
+#strat_j1.add('d',strategy.Dribble())
+#team1.add("Yannis",strat_j1)
 #team1.add("Jexp 2",StaticStrategy())
 team2 = SoccerTeam("real_madrid")
-team2.add("Fonceur", strategy.FonceurStrategy())
+team2.add("Fonceur", FonceStrategy())
 #team2.add("rien 2", StaticStrategy())
 
 
@@ -43,13 +43,12 @@ team2.add("Fonceur", strategy.FonceurStrategy())
 def my_get_features(state,idt,idp):
     """ extraction du vecteur de features d'un etat, ici distance a la balle, distance au but, distance balle but """
     
-    prop=tools.properties(state,idt,idp)
+    prop = tools.properties(state,idt,idp)
     
     f1=prop.dist_ball
     f2=prop.dist_goal
     f3=int(prop.near_play_ball)
     f4=prop.norm_min_ad
-    f5=prop.own_goal.norm
     return [f1,f2,f3,f4]
 
 
@@ -65,7 +64,6 @@ def entrainement(fn):
 def apprentissage(fn):
     ### chargement d'un fichier sauvegarder
     states_tuple = load_jsonz(fn)
-    ## Apprentissage de l'arbre
     data_train, data_labels = build_apprentissage(states_tuple,my_get_features)
     dt = apprend_arbre(data_train,data_labels,depth=10)
     # Visualisation de l'arbre
@@ -78,7 +76,7 @@ def jouer_arbre(dt):
     ####
     # Utilisation de l'arbre
     ###
-    dic = {"AllerBut":strategy.AllerBut(),"DefPlacement":strategy.DefPlacement(),"Goball":strategy.GoBall(), "Dribbler":strategy.Dribble()}
+    dic = {"Fonceur":strategy.FonceurStrategy(),"DefPlacement":strategy.DefPlacement(),"Static":strategy.StaticStrategy()}}
     treeStrat1 = DTreeStrategy(dt,dic,my_get_features)
     #treeStrat2 = DTreeStrategy(dt,dic,my_get_features)
     team3 = SoccerTeam("Arbre Team")
@@ -88,7 +86,7 @@ def jouer_arbre(dt):
     show_simu(simu)
 
 if __name__=="__main__":
-    fn = "test_statesjean.jz"
+    fn = "arbre_qui_marche/solo_arbre.jz"
     if not os.path.isfile(fn):
         entrainement(fn)
     dt = apprentissage(fn)

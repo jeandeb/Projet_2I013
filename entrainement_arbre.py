@@ -12,14 +12,14 @@ import arbres
 
 
 
-team1 = SoccerTeam("forbach")
-strat_j1 = KeyboardStrategy()
-strat_j1.add('a',strategy.FonceurStrategy())
-strat_j1.add('z',strategy.DefPlacement())
-team1.add("Yannis",strat_j1)
+#team1 = SoccerTeam("forbach")
+#strat_j1 = KeyboardStrategy()
+#strat_j1.add('a',strategy.FonceurStrategy())
+#strat_j1.add('z',strategy.DefPlacement())
+#team1.add("Yannis",strat_j1)
 #team1.add("Jexp 2",StaticStrategy())
-team2 = SoccerTeam("real_madrid")
-team2.add("Fonceur", strategy.FonceurStrategy())
+#team2 = SoccerTeam("real_madrid")
+#team2.add("Fonceur", strategy.FonceurStrategy())
 
 
 def my_get_features(state,idt,idp):
@@ -27,7 +27,6 @@ def my_get_features(state,idt,idp):
     
     
     prop=tools.properties(state,idt,idp)
-    
     f1=prop.dist_ball
     f2=prop.dist_goal
     f3=int(prop.near_play_ball)

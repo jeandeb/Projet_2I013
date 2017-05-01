@@ -17,7 +17,7 @@ team1.add( "Cavani", strategy.FonceurStrategy( ) )
 #team2.add( "Fillon", strategy.DefenceOffStrategy( ) )
 #team2.add( "Striker", strategy.Striker4Strategy( ) )
 #team2.add( "Aurier", strategy.SoloStrategy( ) )
-team2.add( "Barthez", strategy.GoalStrategy( ) )
+team2.add( "Barthez", strategy.ArbreStrategy( ) )
 #Creation d'une partie
 #test4
 #team1.add( "Striker", strategy.StrikerStrategy( ) )

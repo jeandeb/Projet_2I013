@@ -4,7 +4,7 @@ from soccersimulator.strategies  import Strategy
 from soccersimulator.mdpsoccer import SoccerTeam, Simulation, SoccerAction
 from soccersimulator.gui import SimuGUI,show_state,show_simu
 from soccersimulator.utils import Vector2D
-import tools
+
 
 
 
@@ -23,7 +23,7 @@ maxBallAcceleration = 5 # Acceleration maximale de la balle
 class ShootingLearningStrat( Strategy ) : 
     def __init__(self,shoot=None):
         self.name = "simple action"
-        self.norm = 2
+        self.norm = 2.0
     def compute_strategy(self,state,id_team,id_player):
         shoot = Vector2D(settings.GAME_WIDTH,settings.GAME_HEIGHT/2.)-state.player_state(id_team,id_player).position
         shoot = shoot.normalize()*self.norm

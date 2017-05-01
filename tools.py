@@ -21,7 +21,7 @@ maxBallAcceleration = 5 # Acceleration maximale de la balle
 
 but2 = Vector2D( GAME_WIDTH, GAME_HEIGHT/2. )
 but1 = Vector2D( 0, GAME_HEIGHT/2 )
-data_shoot = pickle.load( open( "tableau_learning/tab_shoot2.p", "rb" ) )
+data_shoot = pickle.load( open( "tableau_learning/tab_shoot.p", "rb" ) )
 
 
 class properties( object ):
@@ -179,6 +179,10 @@ class properties( object ):
     @property
     def anticipe_dir(self): #Anticipe la direction de la balle 
         return self.vector_ball + 15*self.ball_vitesse
+
+    @property
+    def anticipe_dir_goal(self): #Anticipe la direction de la balle 
+        return self.vector_ball + 50*self.ball_vitesse
         
     
     @property
@@ -233,6 +237,8 @@ class basic_action( object ):
     def go( self,p ):
         dist_p = p - self.prop.my_position
         if dist_p.norm < 1:
+            if self.prop.ball_vitesse.norm ==  0 : 
+                return self.pousse_la_balle
             return SoccerAction( Vector2D( ),Vector2D( ) )
         return SoccerAction( p - self.prop.my_position,Vector2D( ) )
 
@@ -260,6 +266,15 @@ class basic_action( object ):
         if self.prop.ball_vitesse.norm > rayon : 
             return self.go_anticipe_ball
         return self.go_ball
+
+    @property
+    def go_anticipe_ball_goal( self ) : 
+        return SoccerAction( self.prop.anticipe_dir_goal, Vector2D() ) 
+
+    def anticipe_ball_goal(self,rayon):
+        if self.prop.ball_vitesse.norm > rayon : 
+            return self.go_anticipe_ball_goal
+        return self.go_ball
         
     #Calibrer le tir sur la distance par rapport au but
     @property
@@ -281,6 +296,12 @@ class basic_action( object ):
         norm = data_shoot.get_norm( x, y )
         return SoccerAction( Vector2D( ), self.prop.vector_goal.normalize()*norm )
 
+    @property
+    def placement_goal( self ):
+        norm = 10
+        if self.prop.key[0] == 2 : 
+            norm = -norm
+        return self.go( ( self.prop.owngoal + Vector2D( norm, 0 ) ) )
 
     @property
     def placement_def( self ):
@@ -324,7 +345,7 @@ class basic_action( object ):
         return SoccerAction( Vector2D( ), Vector2D( angle = angle_con, norm = norm ) )
 
     def grand_pont( self, angle, pos, angle_force, force ):
-
+        
         if angle < 0 :
             return self.conduire( pos + Vector2D( 0, -angle_force ), force )
         return self.conduire( pos + Vector2D( 0, angle_force ), force )
@@ -360,10 +381,7 @@ class basic_action( object ):
         
         def_behind = ( ( self.prop.my_position - self.prop.adgoal ).norm < ( pos_adv - self.prop.adgoal ).norm )
         if vec_adv.norm < 20 and not def_behind : #valeur avant 30
-            return self.grand_pont( vec_adv.angle, pos_adv, 5, 1.3 )
-
-       # if vec_adv.norm < 30 and not def_behind:
-        #    return self.grand_pont( vec_adv.angle, pos_adv, 30, 1 )            
+            return self.grand_pont( vec_adv.angle, pos_adv, 5, 1.3 )         
 
         if self.prop.all_advplayers_behind :
             return self.conduire( self.prop.adgoal, 2.2 )
@@ -390,18 +408,7 @@ class basic_action( object ):
 
         return self.conduire( self.prop.adgoal, 1 )
     
-    #balek
-    @property
-    def roulette( self ):
-        
-        pos_adv = self.prop.pos_dist_min_ad(self.prop.my_position)
-        vec_adv = pos_adv - self.prop.my_position
-        if angle < 0 :
-            return self.conduire( pos + Vector2D( 0, 8 ), 2.5 ) # j'ai remplacé 10 par 8 et -8
-        return self.conduire( pos + Vector2D( 0, -8 ), 2.5 )
 
-        vecteur_roulette = Vector2D( angle = vec_adv.angle + 1.5, norm = vec_adv.norm )
-        return self.conduire( vecteur_roulette, 1.5 )
             
         
         

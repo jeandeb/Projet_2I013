@@ -66,6 +66,18 @@ class DefenceStrategy( Strategy ):
         state = tools.basic_action(prop )
         
         return basic_strategy.defence(state )
+
+class DefenceTestStrategy( Strategy ):
+
+    def __init__( self ):
+        Strategy.__init__( self, "Defence" )
+
+    def compute_strategy( self, state, id_team, id_player ):
+        
+        prop =  tools.properties(state,id_team,id_player )
+        state = tools.basic_action(prop )
+        
+        return basic_strategy.defencetest(state )
         
 class DefenceOffStrategy( Strategy ):
 
@@ -150,6 +162,18 @@ class Defence4Strategy( Strategy ):
         state = tools.basic_action(prop )
         
         return basic_strategy.defence_4(state )
+
+class GoalStrategy( Strategy ):
+
+    def __init__( self ):
+        Strategy.__init__( self, "Goal" )
+
+    def compute_strategy( self, state, id_team, id_player ):
+        
+        prop =  tools.properties(state,id_team,id_player )
+        state = tools.basic_action(prop )
+        
+        return basic_strategy.goal(state )
     
     
     

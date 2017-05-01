@@ -49,6 +49,7 @@ def my_get_features(state,idt,idp):
     f2=prop.dist_goal
     f3=int(prop.near_play_ball)
     f4=prop.norm_min_ad
+    f5=prop.own_goal.norm
     return [f1,f2,f3,f4]
 
 

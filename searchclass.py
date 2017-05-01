@@ -41,9 +41,9 @@ class ShootSearch(object):
 
         self.cpt_x = 0
         
-        self.max_norm = 6
+        self.max_norm = 8
         self.min_norm = self.strat.norm
-        self.max_tir = 4.0
+        self.max_tir = 10.0
         
         self.x = 0.0
         self.y = 0.0
@@ -95,10 +95,7 @@ class ShootSearch(object):
                 self.step_tir += 1.
                 return
         proba = self.but/(self.step_tir+1)
-        #print self.but
-        #print self.step_tir
-        #print proba
-        #print "----------"
+        
         if self.data.get_proba( self.x, self.y) < proba :
                     self.data.set_proba( proba, self.x, self.y )
                     self.data.set_norm( self.strat.norm, self.x, self.y )

@@ -13,10 +13,10 @@ def get_team( i ):
         MFC.add( "Yannis", strategy.DefenceStrategy( ) )
         MFC.add( "Cavani", strategy.StrikerStrategy( ) )
     if i == 4 :
-        MFC.add( "Yannis", strategy.DefenceStrategy( ) )
+        MFC.add( "Kipembe", strategy.DefenceStrategy( ) )
         MFC.add( "Cavani", strategy.Striker4Strategy( ) )
-        MFC.add( "Iniesta", strategy.DefenceStrategy( ) )
-        MFC.add( "DOG", strategy.FonceurStrategy( ) )
+        MFC.add( "Barthez", strategy.GoalStrategy( ) )
+        MFC.add( "Iniesta", strategy.CenterStrategy( ) )
     return MFC
     
     

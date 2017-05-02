@@ -12,7 +12,7 @@ def fonceur( basic_action ):
 
 def fonceur_base( basic_action ):
     prop = basic_action.prop
-    if not basic_action.prop.can_shoot and basic_action.prop.can_shoot.ball_move : 
+    if not basic_action.prop.can_shoot and basic_action.prop.ball_move : 
            return basic_action.go_ball
     if  basic_action.prop.can_shoot : 
         return basic_action.shoot_goal_max
@@ -212,16 +212,16 @@ def striker_4( basic_action ):
 def center( basic_action ):
     
     prop = basic_action.prop
-
+    
     if prop.can_shoot_learn :
         return basic_action.shoot_learn
 
     if not prop.ball_move : 
         return defence( basic_action )
 
-    if prop.near_play_ball or prop.ball_area( 40 ) : 
-        return passeur_attaque( basic_action )
 
+    if prop.near_play_ball or prop.ball_area( 40 ) or prop.vector_ball.norm < 10 : 
+        return passeur_attaque( basic_action )
 
     return basic_action.placement_center
 

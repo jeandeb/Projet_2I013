@@ -31,12 +31,12 @@ def jouer_arbre(dt):
     ###
     dic = {"Fonceur":strategy.FonceurStrategy(),"DefPlacement":strategy.DefPlacement(),"Static":strategy.StaticStrategy()}
     treeStrat1 = DTreeStrategy(dt,dic,my_get_features)
-    #treeStrat2 = DTreeStrategy(dt,dic,my_get_features)
+
     team1 = SoccerTeam("Arbre Team")
     team1.add("Joueur 1",treeStrat1)
     team2 = SoccerTeam("real_madrid")
     team2.add("Fonceur", strategy.FonceurStrategy())
-    #team3.add("Joueur 2",treeStrat2)
+    
     simu = Simulation(team1,team2)
     show_simu(simu)
     

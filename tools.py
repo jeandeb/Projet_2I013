@@ -177,12 +177,13 @@ class properties( object ):
 
 
     @property
-    def anticipe_dir(self): #Anticipe la direction de la balle 
+    def anticipe_dir(self): 
         return self.vector_ball + 15*self.ball_vitesse
 
     @property
-    def anticipe_dir_goal(self): #Anticipe la direction de la balle 
-        return self.vector_ball + 50*self.ball_vitesse
+    def anticipe_dir_goal(self): 
+        vector = self.vector_ball + 5*self.ball_vitesse
+        return Vector2D( 0, vector.x )
         
     
     @property
@@ -192,6 +193,7 @@ class properties( object ):
                 if dist < self.dist_ball:
                     return False
         return True
+
 
     @property
     def team_ball( self ):
@@ -226,13 +228,36 @@ class basic_action( object ):
     def __init__( self,properties ):
         self.prop = properties
     
-    def passe( self,p ):
+    def passe_2( self,p ):
         
         dir_conduite = p - self.prop.my_position
         angle_con = dir_conduite.angle
         norm = dir_conduite.norm / 2
 
         return SoccerAction( Vector2D( ), Vector2D( angle = angle_con, norm = norm ) )
+
+    def passe( self, p ) :
+
+        tmp = p - self.prop.my_position 
+        y = tmp.y 
+        x = tmp.x
+
+        vector = Vector2D( x, y )
+        norm = vector.norm
+
+        x = GAME_WIDTH/2
+        y = GAME_HEIGHT - norm
+
+        norm = data_shoot.get_norm( x, y )
+        proba  = data_shoot.get_proba( x, y )
+        #vector = Vector2D(  )
+
+        if( proba < 0.2 ) : 
+            return self.passe_2( p )
+
+        return SoccerAction( Vector2D( ), vector.normalize()*norm )
+
+
      
     def go( self,p ):
         dist_p = p - self.prop.my_position
@@ -263,7 +288,8 @@ class basic_action( object ):
         return SoccerAction( self.prop.anticipe_dir, Vector2D() ) 
         
     def anticipe_ball(self,rayon):
-        if self.prop.ball_vitesse.norm > rayon : 
+
+        if self.prop.vector_ball.norm > 4 and self.prop.ball_vitesse.norm > rayon  : 
             return self.go_anticipe_ball
         return self.go_ball
 
@@ -272,8 +298,8 @@ class basic_action( object ):
         return SoccerAction( self.prop.anticipe_dir_goal, Vector2D() ) 
 
     def anticipe_ball_goal(self,rayon):
-        if self.prop.ball_vitesse.norm > rayon : 
-            return self.go_anticipe_ball_goal
+        if self.prop.vector_ball.norm > 10 : 
+            return self.go_anticipe_ball
         return self.go_ball
         
     #Calibrer le tir sur la distance par rapport au but
@@ -290,7 +316,7 @@ class basic_action( object ):
     @property
     def shoot_learn( self ) :
 
-        x = self.prop.get_y_learn
+        x = self.prop.get_x_learn
         y = self.prop.get_y_learn
     
         norm = data_shoot.get_norm( x, y )
@@ -298,10 +324,8 @@ class basic_action( object ):
 
     @property
     def placement_goal( self ):
-        norm = 10
-        if self.prop.key[0] == 2 : 
-            norm = -norm
-        return self.go( ( self.prop.owngoal + Vector2D( norm, 0 ) ) )
+        
+        return self.go( self.prop.owngoal )
 
     @property
     def placement_def( self ):

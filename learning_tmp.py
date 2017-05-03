@@ -10,7 +10,6 @@ import numpy as np
 import logging
 
 data = dataclass.discretedata()
-#utils.dump_jsonz( data, "tab_shoot" )
 
 expe = searchclass.ShootSearch( data )
 
@@ -20,8 +19,3 @@ print data.tab_proba
 print data.tab_norm
 
 pickle.dump( data, open( "tableau_learning/tab_shoot3.p", "wb" ) )
-#for i in range( expe.data.nb_x ) :
- #   for j in range( expe.data.nb_y ) :
-  #      x = i * expe.data.step_x
-   #     y = j * expe.data.step_y
-    #    print( "x =  "+ str(x) + " y = " + str(y) + "norm = " + str(expe.data.get_norm( x, y )) + " proba = " + str(expe.data.get_proba( x, y ))  )
